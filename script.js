@@ -98,28 +98,23 @@ function populateYearOptions() {
     renderTable(select.value);
 }
 
-// NEW: Update the latest water level card
 function updateLatestCard() {
     if (allRows.length === 0) return;
     
-    // Get the most recent row (first in sorted array)
     const latest = allRows[0];
     const waterLevel = latest["Water Level (moh)"];
     const changeCm = latest["Change cm/m"];
     
-    // Update water level value
     const latestValueElem = document.getElementById('latestValue');
     if (latestValueElem && waterLevel) {
         latestValueElem.textContent = waterLevel;
     }
     
-    // Update change indicator
     const latestChangeElem = document.getElementById('latestChange');
     const changeArrow = document.querySelector('.change-arrow');
     const changeValue = document.querySelector('.change-value');
     
     if (latestChangeElem && changeCm) {
-        // Parse the change value (remove 'cm' suffix if present)
         let changeNum = parseFloat(changeCm);
         let changeText = changeCm.toString().replace('cm', '').trim();
         
@@ -140,31 +135,109 @@ function updateLatestCard() {
         }
     }
     
-    // Update timestamp
     const latestUpdatedElem = document.getElementById('latestUpdated');
     if (latestUpdatedElem && latest.Timestamp) {
         latestUpdatedElem.textContent = `Oppdatert: ${latest.Timestamp}`;
     }
 }
 
-Papa.parse(CSV_URL, {
-    download: true,
-    header: true,
-    dynamicTyping: true,
-    complete: function(results) {
-        allRows = results.data.filter(row => row.Date && row["Water Level (moh)"]);
-        allRows.sort((a, b) => {
-            const dateA = getDateObject(a.Date);
-            const dateB = getDateObject(b.Date);
-            return dateB - dateA;
-        });
-        
-        populateYearOptions();
-        updateLatestCard(); // NEW: Update the card
-        
-        const select = document.getElementById('yearSelect');
-        select.addEventListener('change', function() {
-            renderTable(this.value);
-        });
-    }
-});
+// NEW: Refresh data function
+function refreshData() {
+    const refreshBtn = document.getElementById('refreshBtn');
+    const originalContent = refreshBtn.innerHTML;
+    
+    // Show loading spinner
+    refreshBtn.innerHTML = `
+        <svg class="action-icon spinning" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 4v6h-6"/>
+            <path d="M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/>
+            <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+    `;
+    refreshBtn.disabled = true;
+    
+    // Fetch fresh data
+    Papa.parse(CSV_URL, {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function(results) {
+            allRows = results.data.filter(row => row.Date && row["Water Level (moh)"]);
+            allRows.sort((a, b) => {
+                const dateA = getDateObject(a.Date);
+                const dateB = getDateObject(b.Date);
+                return dateB - dateA;
+            });
+            
+            // Update UI
+            const currentYear = document.getElementById('yearSelect').value;
+            populateYearOptions();
+            
+            // Restore selected year after refresh
+            const select = document.getElementById('yearSelect');
+            if (select.querySelector(`option[value="${currentYear}"]`)) {
+                select.value = currentYear;
+            }
+            renderTable(select.value);
+            updateLatestCard();
+            
+            // Restore button
+            refreshBtn.innerHTML = originalContent;
+            refreshBtn.disabled = false;
+            
+            // Optional: Show a subtle "oppdatert" feedback
+            const latestUpdatedElem = document.getElementById('latestUpdated');
+            if (latestUpdatedElem) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                latestUpdatedElem.textContent = `Oppdatert: ${timeStr}`;
+                setTimeout(() => {
+                    if (allRows[0] && allRows[0].Timestamp) {
+                        latestUpdatedElem.textContent = `Oppdatert: ${allRows[0].Timestamp}`;
+                    }
+                }, 2000);
+            }
+        },
+        error: function(error) {
+            console.error("Refresh failed:", error);
+            refreshBtn.innerHTML = originalContent;
+            refreshBtn.disabled = false;
+            alert("Kunne ikke oppdatere data. Sjekk nettverkstilkoblingen.");
+        }
+    });
+}
+
+// Initial load
+function initialLoad() {
+    Papa.parse(CSV_URL, {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function(results) {
+            allRows = results.data.filter(row => row.Date && row["Water Level (moh)"]);
+            allRows.sort((a, b) => {
+                const dateA = getDateObject(a.Date);
+                const dateB = getDateObject(b.Date);
+                return dateB - dateA;
+            });
+            
+            populateYearOptions();
+            updateLatestCard();
+            
+            const select = document.getElementById('yearSelect');
+            select.addEventListener('change', function() {
+                renderTable(this.value);
+            });
+            
+            // Attach refresh button event
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshData);
+            }
+        }
+    });
+}
+
+// Start everything
+initialLoad();
