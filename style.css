@@ -12,7 +12,6 @@ body {
     min-height: 100vh;
 }
 
-/* Grey wrapper like Google Sites */
 .site-wrapper {
     max-width: 100%;
     background-color: #eef7ff;
@@ -20,7 +19,6 @@ body {
     padding: 40px 32px;
 }
 
-/* Page header - PIMPED UP */
 .site-header {
     max-width: 1200px;
     margin: 0 auto 24px auto;
@@ -42,7 +40,6 @@ body {
     border-bottom: 3px solid #1b8cae;
 }
 
-/* White dashboard card */
 .dashboard-card {
     max-width: 1200px;
     margin: 0 auto;
@@ -55,7 +52,6 @@ body {
     overflow: hidden;
 }
 
-/* Blue header inside card */
 .dashboard-header {
     background: linear-gradient(135deg, #0b5e7e, #1b8cae);
     color: white;
@@ -76,7 +72,6 @@ body {
     opacity: 0.9;
 }
 
-/* Latest Water Level Card - COMPACT VERSION */
 .latest-card {
     background: linear-gradient(135deg, #f8f9fa, #ffffff);
     border-radius: 12px;
@@ -159,7 +154,6 @@ body {
     background-color: #f1f3f4;
 }
 
-/* Filter bar */
 .filter-bar {
     padding: 12px 28px;
     background-color: #f8f9fa;
@@ -194,7 +188,6 @@ body {
     color: #202124;
 }
 
-/* Action buttons (Refresh, Export, Graph) */
 .action-buttons {
     display: flex;
     align-items: center;
@@ -226,7 +219,6 @@ body {
     display: block;
 }
 
-/* Scrollable table container */
 .table-wrapper {
     overflow-x: auto;
     overflow-y: auto;
@@ -281,7 +273,6 @@ body {
 .col-change-raw { width: 25%; }
 .col-change-cm { width: 25%; }
 
-/* Dashboard footer */
 .dashboard-footer {
     background-color: #f8f9fa;
     border-top: 1px solid #dadce0;
@@ -321,21 +312,15 @@ body {
     color: #5f6368;
 }
 
-/* Spinning animation for refresh button - FIXED: moved outside media query */
 .spinning {
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-/* Refresh feedback toast - FIXED: moved outside media query */
 .refresh-toast {
     position: fixed;
     bottom: 20px;
@@ -358,7 +343,74 @@ body {
     opacity: 1;
 }
 
-/* Mobile styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0e5eb;
+    background: linear-gradient(135deg, #0b5e7e, #1b8cae);
+    color: white;
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.modal-close {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+#graphCanvas {
+    width: 100%;
+    max-height: 500px;
+}
+
+.modal-note {
+    text-align: center;
+    font-size: 12px;
+    color: #5f6368;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e0e5eb;
+}
+
 @media (max-width: 768px) {
     .hide-on-mobile {
         display: none;
@@ -396,7 +448,6 @@ body {
         font-size: 9px;
     }
     
-    /* Latest card mobile */
     .latest-card {
         margin: 8px 12px 6px 12px;
         padding: 8px 12px;
@@ -433,7 +484,6 @@ body {
         font-size: 12px;
     }
     
-    /* Filter bar mobile - ALL ON ONE LINE */
     .filter-bar {
         padding: 8px 12px;
         flex-direction: row;
@@ -496,125 +546,12 @@ body {
         font-size: 9px;
     }
     
-    /* Toast on mobile - FIXED */
     .refresh-toast {
         bottom: 80px;
         font-size: 11px;
         padding: 6px 12px;
     }
-}
-
-/* Desktop large screens */
-@media (min-width: 1200px) {
-    .site-wrapper {
-        padding: 48px 40px;
-    }
     
-    .site-header h1 {
-        font-size: 28px;
-    }
-    
-    .dashboard-header {
-        padding: 24px 32px;
-    }
-    
-    .filter-bar {
-        padding: 14px 32px;
-    }
-    
-    .dashboard-footer {
-        padding: 32px 32px 26px 32px;
-    }
-
-    /* Graph Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 0;
-    width: 90%;
-    max-width: 800px;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    animation: slideIn 0.2s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid #e0e5eb;
-    background: linear-gradient(135deg, #0b5e7e, #1b8cae);
-    color: white;
-    border-radius: 16px 16px 0 0;
-}
-
-.modal-title {
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.modal-close {
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s;
-    line-height: 1;
-}
-
-.modal-close:hover {
-    transform: scale(1.1);
-}
-
-.modal-body {
-    padding: 20px;
-}
-
-#graphCanvas {
-    width: 100%;
-    max-height: 500px;
-}
-
-.modal-note {
-    text-align: center;
-    font-size: 12px;
-    color: #5f6368;
-    margin-top: 16px;
-    padding-top: 12px;
-    border-top: 1px solid #e0e5eb;
-}
-
-/* Mobile modal */
-@media (max-width: 768px) {
     .modal-content {
         margin: 20% auto;
         width: 95%;
@@ -640,4 +577,25 @@ body {
         font-size: 10px;
     }
 }
+
+@media (min-width: 1200px) {
+    .site-wrapper {
+        padding: 48px 40px;
+    }
+    
+    .site-header h1 {
+        font-size: 28px;
+    }
+    
+    .dashboard-header {
+        padding: 24px 32px;
+    }
+    
+    .filter-bar {
+        padding: 14px 32px;
+    }
+    
+    .dashboard-footer {
+        padding: 32px 32px 26px 32px;
+    }
 }
