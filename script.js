@@ -5,6 +5,12 @@ const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
 
 let allRows = [];
 let chartInstance = null;
+let isMobile = false;
+
+// Detect mobile device
+function checkMobile() {
+    isMobile = window.innerWidth <= 768;
+}
 
 function getDateObject(dateStr) {
     const parts = dateStr.split('-');
@@ -20,6 +26,10 @@ function getYear(dateStr) {
 function formatDateForChart(dateStr) {
     const parts = dateStr.split('-');
     if (parts.length !== 3) return dateStr;
+    // On mobile, show even shorter dates
+    if (isMobile) {
+        return `${parts[0]}/${parts[1]}`;
+    }
     return `${parts[0]}.${parts[1]}`;
 }
 
@@ -45,19 +55,6 @@ function calculateTrendLine(data) {
 function calculateAverage(data) {
     const sum = data.reduce((a, b) => a + b, 0);
     return sum / data.length;
-}
-
-// Create gradient for bars
-function createGradient(ctx, chartArea, value, isPositive) {
-    const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-    if (isPositive) {
-        gradient.addColorStop(0, '#34a853');
-        gradient.addColorStop(1, '#0d652d');
-    } else {
-        gradient.addColorStop(0, '#ea4335');
-        gradient.addColorStop(1, '#c5221f');
-    }
-    return gradient;
 }
 
 function addDivider(tbody, month, year) {
@@ -288,7 +285,7 @@ function exportToCSV() {
     showToast(`✓ Eksportert ${exportRows.length} rader`);
 }
 
-// PIMPED UP GRAPH with average line, trend line, gradients, and thinner bars
+// MOBILE-OPTIMIZED GRAPH
 function showGraph() {
     const selectedYear = document.getElementById('yearSelect').value;
     
@@ -302,8 +299,17 @@ function showGraph() {
         return;
     }
     
-    // Use last 30 days for better readability
-    const displayRows = graphRows.slice(0, 30);
+    checkMobile();
+    
+    // On mobile, show fewer data points for better readability
+    let displayRows = graphRows;
+    if (isMobile && graphRows.length > 15) {
+        // Take every 2nd data point on mobile
+        displayRows = graphRows.filter((_, index) => index % 2 === 0);
+        if (displayRows.length < 10) displayRows = graphRows.slice(0, 15);
+    }
+    displayRows = displayRows.slice(0, isMobile ? 20 : 30);
+    
     const labels = [];
     const changeData = [];
     const backgroundColors = [];
@@ -323,9 +329,13 @@ function showGraph() {
         }
     });
     
-    // Calculate trend line and average
-    const trendLineData = calculateTrendLine(changeData);
-    const averageValue = calculateAverage(changeData);
+    // Calculate trend line and average only if we have enough data
+    let trendLineData = changeData;
+    let averageValue = 0;
+    if (changeData.length >= 3) {
+        trendLineData = calculateTrendLine(changeData);
+        averageValue = calculateAverage(changeData);
+    }
     
     if (chartInstance) {
         chartInstance.destroy();
@@ -333,84 +343,116 @@ function showGraph() {
     
     const ctx = document.getElementById('graphCanvas').getContext('2d');
     
-    chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Endring (cm)',
-                    data: changeData,
-                    backgroundColor: backgroundColors,
-                    borderRadius: 4,
-                    borderSkipped: false,
-                    barPercentage: 0.4,
-                    categoryPercentage: 0.8
-                },
-                {
-                    label: 'Trendlinje',
-                    data: trendLineData,
-                    type: 'line',
-                    borderColor: '#1a73e8',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0,
-                    order: 1
-                },
-                {
-                    label: `Gjennomsnitt (${averageValue.toFixed(1)} cm)`,
-                    data: Array(changeData.length).fill(averageValue),
-                    type: 'line',
-                    borderColor: '#ea4335',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    borderDash: [],
-                    pointRadius: 0,
-                    fill: false,
-                    tension: 0,
-                    order: 0
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            if (context.dataset.label === 'Trendlinje') return null;
-                            if (context.dataset.label.includes('Gjennomsnitt')) return null;
-                            let value = context.raw;
-                            if (value > 0) return `Stigning: +${value} cm`;
-                            if (value < 0) return `Fall: ${value} cm`;
-                            return `Ingen endring: 0 cm`;
-                        }
-                    }
-                },
-                legend: {
-                    position: 'top',
-                    labels: {
-                        boxWidth: 12,
-                        usePointStyle: true,
-                        pointStyle: 'rect'
-                    }
+    // Mobile-optimized chart options
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        if (context.dataset.label === 'Trendlinje') return null;
+                        if (context.dataset.label && context.dataset.label.includes('Gjennomsnitt')) return null;
+                        let value = context.raw;
+                        if (value > 0) return `Stigning: +${value} cm`;
+                        if (value < 0) return `Fall: ${value} cm`;
+                        return `Ingen endring: 0 cm`;
+                    },
+                    // On mobile, show smaller tooltips
+                    bodyFont: { size: isMobile ? 10 : 12 },
+                    titleFont: { size: isMobile ? 10 : 12 }
                 }
             },
-            scales: {
-                y: {
-                    title: { display: true, text: 'Endring (cm)', color: '#5f6368' },
-                    grid: { color: '#e0e5eb' }
+            legend: {
+                position: isMobile ? 'bottom' : 'top',
+                labels: {
+                    boxWidth: isMobile ? 8 : 12,
+                    font: { size: isMobile ? 9 : 12 },
+                    usePointStyle: true,
+                    pointStyle: 'rect'
+                }
+            }
+        },
+        scales: {
+            y: {
+                title: { 
+                    display: !isMobile, 
+                    text: 'Endring (cm)', 
+                    color: '#5f6368' 
                 },
-                x: {
-                    title: { display: true, text: 'Dato', color: '#5f6368' },
-                    ticks: { maxRotation: 45, minRotation: 45 }
+                grid: { color: '#e0e5eb' },
+                ticks: { 
+                    font: { size: isMobile ? 9 : 11 },
+                    stepSize: isMobile ? undefined : undefined
+                }
+            },
+            x: {
+                title: { 
+                    display: !isMobile, 
+                    text: 'Dato', 
+                    color: '#5f6368' 
+                },
+                ticks: { 
+                    maxRotation: isMobile ? 45 : 45, 
+                    minRotation: isMobile ? 45 : 45,
+                    font: { size: isMobile ? 8 : 11 },
+                    autoSkip: true,
+                    maxTicksLimit: isMobile ? 8 : 15
                 }
             }
         }
+    };
+    
+    const datasets = [
+        {
+            label: 'Endring (cm)',
+            data: changeData,
+            backgroundColor: backgroundColors,
+            borderRadius: 4,
+            borderSkipped: false,
+            barPercentage: isMobile ? 0.5 : 0.4,
+            categoryPercentage: isMobile ? 0.7 : 0.8
+        }
+    ];
+    
+    // Add trend line only if we have enough data
+    if (changeData.length >= 3 && trendLineData !== changeData) {
+        datasets.push({
+            label: 'Trendlinje',
+            data: trendLineData,
+            type: 'line',
+            borderColor: '#1a73e8',
+            backgroundColor: 'transparent',
+            borderWidth: isMobile ? 1.5 : 2,
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false,
+            tension: 0,
+            order: 1
+        });
+    }
+    
+    // Add average line only if we have data
+    if (changeData.length > 0) {
+        datasets.push({
+            label: `Gj.snitt (${averageValue.toFixed(1)} cm)`,
+            data: Array(changeData.length).fill(averageValue),
+            type: 'line',
+            borderColor: '#ea4335',
+            backgroundColor: 'transparent',
+            borderWidth: isMobile ? 1.5 : 2,
+            borderDash: [],
+            pointRadius: 0,
+            fill: false,
+            tension: 0,
+            order: 0
+        });
+    }
+    
+    chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: labels, datasets: datasets },
+        options: chartOptions
     });
     
     document.getElementById('graphModal').style.display = 'block';
@@ -421,6 +463,9 @@ function closeModal() {
 }
 
 function init() {
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
     Papa.parse(CSV_URL, {
         download: true,
         header: true,
