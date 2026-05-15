@@ -98,6 +98,55 @@ function populateYearOptions() {
     renderTable(select.value);
 }
 
+// NEW: Update the latest water level card
+function updateLatestCard() {
+    if (allRows.length === 0) return;
+    
+    // Get the most recent row (first in sorted array)
+    const latest = allRows[0];
+    const waterLevel = latest["Water Level (moh)"];
+    const changeCm = latest["Change cm/m"];
+    
+    // Update water level value
+    const latestValueElem = document.getElementById('latestValue');
+    if (latestValueElem && waterLevel) {
+        latestValueElem.textContent = waterLevel;
+    }
+    
+    // Update change indicator
+    const latestChangeElem = document.getElementById('latestChange');
+    const changeArrow = document.querySelector('.change-arrow');
+    const changeValue = document.querySelector('.change-value');
+    
+    if (latestChangeElem && changeCm) {
+        // Parse the change value (remove 'cm' suffix if present)
+        let changeNum = parseFloat(changeCm);
+        let changeText = changeCm.toString().replace('cm', '').trim();
+        
+        if (!isNaN(changeNum)) {
+            if (changeNum > 0) {
+                changeArrow.textContent = '▲';
+                changeValue.textContent = `+${changeText} cm`;
+                latestChangeElem.className = 'latest-change positive';
+            } else if (changeNum < 0) {
+                changeArrow.textContent = '▼';
+                changeValue.textContent = `${changeText} cm`;
+                latestChangeElem.className = 'latest-change negative';
+            } else {
+                changeArrow.textContent = '●';
+                changeValue.textContent = `${changeText} cm`;
+                latestChangeElem.className = 'latest-change neutral';
+            }
+        }
+    }
+    
+    // Update timestamp
+    const latestUpdatedElem = document.getElementById('latestUpdated');
+    if (latestUpdatedElem && latest.Timestamp) {
+        latestUpdatedElem.textContent = `Oppdatert: ${latest.Timestamp}`;
+    }
+}
+
 Papa.parse(CSV_URL, {
     download: true,
     header: true,
@@ -111,6 +160,7 @@ Papa.parse(CSV_URL, {
         });
         
         populateYearOptions();
+        updateLatestCard(); // NEW: Update the card
         
         const select = document.getElementById('yearSelect');
         select.addEventListener('change', function() {
