@@ -23,6 +23,43 @@ function formatDateForChart(dateStr) {
     return `${parts[0]}.${parts[1]}`;
 }
 
+// Calculate linear regression trend line
+function calculateTrendLine(data) {
+    const n = data.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    
+    for (let i = 0; i < n; i++) {
+        sumX += i;
+        sumY += data[i];
+        sumXY += i * data[i];
+        sumX2 += i * i;
+    }
+    
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    
+    return data.map((_, i) => slope * i + intercept);
+}
+
+// Calculate average
+function calculateAverage(data) {
+    const sum = data.reduce((a, b) => a + b, 0);
+    return sum / data.length;
+}
+
+// Create gradient for bars
+function createGradient(ctx, chartArea, value, isPositive) {
+    const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+    if (isPositive) {
+        gradient.addColorStop(0, '#34a853');
+        gradient.addColorStop(1, '#0d652d');
+    } else {
+        gradient.addColorStop(0, '#ea4335');
+        gradient.addColorStop(1, '#c5221f');
+    }
+    return gradient;
+}
+
 function addDivider(tbody, month, year) {
     const dividerRow = document.createElement("tr");
     dividerRow.className = "month-divider";
@@ -251,6 +288,7 @@ function exportToCSV() {
     showToast(`✓ Eksportert ${exportRows.length} rader`);
 }
 
+// PIMPED UP GRAPH with average line, trend line, gradients, and thinner bars
 function showGraph() {
     const selectedYear = document.getElementById('yearSelect').value;
     
@@ -264,6 +302,7 @@ function showGraph() {
         return;
     }
     
+    // Use last 30 days for better readability
     const displayRows = graphRows.slice(0, 30);
     const labels = [];
     const changeData = [];
@@ -280,32 +319,61 @@ function showGraph() {
             backgroundColors.push('#9aa0a6');
         } else {
             changeData.push(changeNum);
-            if (changeNum > 0) {
-                backgroundColors.push('#0d652d');
-            } else if (changeNum < 0) {
-                backgroundColors.push('#c5221f');
-            } else {
-                backgroundColors.push('#9aa0a6');
-            }
+            backgroundColors.push(changeNum > 0 ? '#0d652d' : (changeNum < 0 ? '#c5221f' : '#9aa0a6'));
         }
     });
+    
+    // Calculate trend line and average
+    const trendLineData = calculateTrendLine(changeData);
+    const averageValue = calculateAverage(changeData);
     
     if (chartInstance) {
         chartInstance.destroy();
     }
     
     const ctx = document.getElementById('graphCanvas').getContext('2d');
+    
     chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Endring (cm)',
-                data: changeData,
-                backgroundColor: backgroundColors,
-                borderRadius: 4,
-                borderSkipped: false
-            }]
+            datasets: [
+                {
+                    label: 'Endring (cm)',
+                    data: changeData,
+                    backgroundColor: backgroundColors,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                    barPercentage: 0.4,
+                    categoryPercentage: 0.8
+                },
+                {
+                    label: 'Trendlinje',
+                    data: trendLineData,
+                    type: 'line',
+                    borderColor: '#1a73e8',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 1
+                },
+                {
+                    label: `Gjennomsnitt (${averageValue.toFixed(1)} cm)`,
+                    data: Array(changeData.length).fill(averageValue),
+                    type: 'line',
+                    borderColor: '#ea4335',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [],
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    order: 0
+                }
+            ]
         },
         options: {
             responsive: true,
@@ -314,6 +382,8 @@ function showGraph() {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
+                            if (context.dataset.label === 'Trendlinje') return null;
+                            if (context.dataset.label.includes('Gjennomsnitt')) return null;
                             let value = context.raw;
                             if (value > 0) return `Stigning: +${value} cm`;
                             if (value < 0) return `Fall: ${value} cm`;
@@ -321,7 +391,14 @@ function showGraph() {
                         }
                     }
                 },
-                legend: { display: false }
+                legend: {
+                    position: 'top',
+                    labels: {
+                        boxWidth: 12,
+                        usePointStyle: true,
+                        pointStyle: 'rect'
+                    }
+                }
             },
             scales: {
                 y: {
@@ -363,7 +440,6 @@ function init() {
                 renderTable(this.value);
             });
             
-            // Simple direct button attachments that work everywhere
             document.getElementById('refreshBtn').onclick = function(e) { e.preventDefault(); refreshData(); };
             document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
             document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
