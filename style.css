@@ -495,5 +495,35 @@ body {
             transform: rotate(360deg);
         }
     }
+    /* Refresh feedback toast */
+.refresh-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #0d652d;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.refresh-toast.show {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .refresh-toast {
+        bottom: 80px;
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+}
 
 }
