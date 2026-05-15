@@ -92,7 +92,7 @@
                     </a>
                     <div style="display: flex; align-items: center; gap: 6px; color: #5f6368; font-size: 13px;">
                         <span>👁️ Besøkende:</span>
-                        <span id="visitorCount">Laster...</span>
+                        <span id="visitorCount">0</span>
                     </div>
                     <div class="footer-copyright">
                         © 2026 InfoBåten
@@ -119,17 +119,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
-    <!-- Simple visitor counter script -->
+    <!-- Simple visitor counter - NO external images, just clean text -->
     <script>
-        // Simple visitor counter using localStorage
-        let count = localStorage.getItem('visitorCount');
+        let count = localStorage.getItem('infobaaten_visitor');
         if (count === null) {
             count = 1;
         } else {
             count = parseInt(count) + 1;
         }
-        localStorage.setItem('visitorCount', count);
-        document.getElementById('visitorCount').innerText = count.toLocaleString('no-NO');
+        localStorage.setItem('infobaaten_visitor', count);
+        document.getElementById('visitorCount').innerText = count;
     </script>
 </body>
 </html>
