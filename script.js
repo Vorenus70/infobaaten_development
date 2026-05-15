@@ -186,24 +186,44 @@ function refreshData() {
             refreshBtn.innerHTML = originalContent;
             refreshBtn.disabled = false;
             
-            // Optional: Show a subtle "oppdatert" feedback
+            // Show toast notification
+            let toast = document.querySelector('.refresh-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'refresh-toast';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = '✓ Data oppdatert';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+            
+            // Update timestamp from actual data
             const latestUpdatedElem = document.getElementById('latestUpdated');
-            if (latestUpdatedElem) {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString('no-NO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                latestUpdatedElem.textContent = `Oppdatert: ${timeStr}`;
-                setTimeout(() => {
-                    if (allRows[0] && allRows[0].Timestamp) {
-                        latestUpdatedElem.textContent = `Oppdatert: ${allRows[0].Timestamp}`;
-                    }
-                }, 2000);
+            if (latestUpdatedElem && allRows[0] && allRows[0].Timestamp) {
+                latestUpdatedElem.textContent = `Oppdatert: ${allRows[0].Timestamp}`;
             }
         },
         error: function(error) {
             console.error("Refresh failed:", error);
             refreshBtn.innerHTML = originalContent;
             refreshBtn.disabled = false;
-            alert("Kunne ikke oppdatere data. Sjekk nettverkstilkoblingen.");
+            
+            // Show error toast
+            let toast = document.querySelector('.refresh-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.className = 'refresh-toast';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = '❌ Kunne ikke oppdatere';
+            toast.style.backgroundColor = '#c5221f';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.style.backgroundColor = '#0d652d';
+            }, 2000);
         }
     });
 }
