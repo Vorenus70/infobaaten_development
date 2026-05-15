@@ -174,7 +174,7 @@ body {
 .filter-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .filter-left label {
@@ -185,7 +185,7 @@ body {
 }
 
 .filter-left select {
-    padding: 6px 10px;
+    padding: 6px 8px;
     font-size: 13px;
     border: 1px solid #dadce0;
     border-radius: 4px;
@@ -328,12 +328,12 @@ body {
     }
     
     .site-wrapper {
-        padding: 20px 16px;
+        padding: 20px 12px;
     }
     
     .site-header {
-        padding: 0 4px 16px 4px;
-        margin-bottom: 16px;
+        padding: 0 4px 12px 4px;
+        margin-bottom: 12px;
     }
     
     .site-header h1 {
@@ -347,22 +347,22 @@ body {
     }
     
     .dashboard-header {
-        padding: 14px 16px;
+        padding: 12px 12px;
         border-radius: 8px 8px 0 0;
     }
     
     .dashboard-header h2 {
-        font-size: 18px;
+        font-size: 16px;
     }
     
     .dashboard-header p {
-        font-size: 10px;
+        font-size: 9px;
     }
     
-    /* Latest card mobile - COMPACT */
+    /* Latest card mobile */
     .latest-card {
         margin: 8px 12px 6px 12px;
-        padding: 8px 14px;
+        padding: 8px 12px;
     }
     
     .latest-header {
@@ -375,51 +375,64 @@ body {
     }
     
     .latest-value {
-        font-size: 26px;
+        font-size: 24px;
     }
     
     .latest-value::after {
-        font-size: 11px;
+        font-size: 10px;
     }
     
     .latest-change {
-        font-size: 13px;
+        font-size: 12px;
         padding: 3px 8px;
         gap: 4px;
     }
     
     .change-arrow {
-        font-size: 14px;
+        font-size: 12px;
     }
     
     .change-value {
-        font-size: 13px;
+        font-size: 12px;
     }
     
-    /* Filter bar mobile */
+    /* Filter bar mobile - ALL ON ONE LINE */
     .filter-bar {
-        padding: 10px 16px;
-        flex-direction: column;
-        align-items: stretch;
+        padding: 8px 12px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
     }
     
     .filter-left {
-        justify-content: space-between;
+        gap: 4px;
+        flex-shrink: 1;
+    }
+    
+    .filter-left label {
+        font-size: 12px;
+    }
+    
+    .filter-left select {
+        padding: 5px 6px;
+        font-size: 12px;
+        max-width: 70px;
     }
     
     .action-buttons {
-        justify-content: flex-end;
-        gap: 12px;
-        margin-top: 4px;
+        gap: 6px;
+        flex-shrink: 0;
     }
     
     .action-btn {
-        padding: 8px;
+        padding: 5px;
     }
     
     .action-icon {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
     }
     
     .data-table th,
@@ -434,16 +447,16 @@ body {
     }
     
     .dashboard-footer {
-        padding: 24px 16px 20px 16px;
+        padding: 16px 12px;
     }
     
     .facebook-btn {
-        padding: 6px 14px;
-        font-size: 12px;
+        padding: 5px 12px;
+        font-size: 11px;
     }
     
     .footer-copyright {
-        font-size: 10px;
+        font-size: 9px;
     }
 }
 
