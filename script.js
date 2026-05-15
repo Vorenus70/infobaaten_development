@@ -4,6 +4,7 @@ const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
                     'juli', 'august', 'september', 'oktober', 'november', 'desember'];
 
 let allRows = [];
+let chartInstance = null;
 
 function getDateObject(dateStr) {
     const parts = dateStr.split('-');
@@ -14,6 +15,12 @@ function getDateObject(dateStr) {
 function getYear(dateStr) {
     const parts = dateStr.split('-');
     return parts.length === 3 ? parseInt(parts[2], 10) : null;
+}
+
+function formatDateForChart(dateStr) {
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    return `${parts[0]}.${parts[1]}`;
 }
 
 function addDivider(tbody, month, year) {
@@ -220,7 +227,7 @@ function refreshData() {
     });
 }
 
-// NEW: Export to CSV function
+// Export to CSV function
 function exportToCSV() {
     const selectedYear = document.getElementById('yearSelect').value;
     
@@ -246,7 +253,6 @@ function exportToCSV() {
         return;
     }
     
-    // Prepare CSV data
     const headers = ['Tid', 'Dato', 'Vannstand (moh)', 'Endring m', 'Endring cm'];
     const csvRows = [headers];
     
@@ -260,13 +266,8 @@ function exportToCSV() {
         ]);
     });
     
-    // Convert to CSV string
     const csvContent = csvRows.map(row => row.join(';')).join('\n');
-    
-    // Add BOM for Norwegian characters
     const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-    
-    // Create download link
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     const today = new Date();
@@ -283,7 +284,6 @@ function exportToCSV() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    // Show success toast
     let toast = document.querySelector('.refresh-toast');
     if (!toast) {
         toast = document.createElement('div');
@@ -296,6 +296,134 @@ function exportToCSV() {
     setTimeout(() => {
         toast.classList.remove('show');
     }, 2000);
+}
+
+// NEW: Show Graph function
+function showGraph() {
+    const selectedYear = document.getElementById('yearSelect').value;
+    
+    let graphRows = allRows;
+    if (selectedYear !== 'all') {
+        graphRows = allRows.filter(row => getYear(row.Date) === parseInt(selectedYear, 10));
+    }
+    
+    if (graphRows.length === 0) {
+        let toast = document.querySelector('.refresh-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'refresh-toast';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = '❌ Ingen data å vise graf for';
+        toast.style.backgroundColor = '#c5221f';
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.style.backgroundColor = '#0d652d';
+        }, 2000);
+        return;
+    }
+    
+    // Take last 30 days for better readability, or all if less
+    const displayRows = graphRows.slice(0, 30);
+    const labels = [];
+    const changeData = [];
+    const backgroundColors = [];
+    
+    displayRows.reverse().forEach(row => {
+        labels.push(formatDateForChart(row.Date));
+        const changeCm = row["Change cm/m"];
+        let changeNum = parseFloat(changeCm);
+        
+        if (isNaN(changeNum)) {
+            changeData.push(0);
+            backgroundColors.push('#9aa0a6');
+        } else {
+            changeData.push(changeNum);
+            if (changeNum > 0) {
+                backgroundColors.push('#0d652d');
+            } else if (changeNum < 0) {
+                backgroundColors.push('#c5221f');
+            } else {
+                backgroundColors.push('#9aa0a6');
+            }
+        }
+    });
+    
+    // Destroy existing chart if any
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+    
+    const ctx = document.getElementById('graphCanvas').getContext('2d');
+    chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Endring (cm)',
+                data: changeData,
+                backgroundColor: backgroundColors,
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let value = context.raw;
+                            if (value > 0) {
+                                return `Stigning: +${value} cm`;
+                            } else if (value < 0) {
+                                return `Fall: ${value} cm`;
+                            }
+                            return `Ingen endring: 0 cm`;
+                        }
+                    }
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Endring (cm)',
+                        color: '#5f6368'
+                    },
+                    grid: {
+                        color: '#e0e5eb'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Dato',
+                        color: '#5f6368'
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+    
+    // Show modal
+    const modal = document.getElementById('graphModal');
+    modal.style.display = 'block';
+}
+
+// Close modal function
+function closeModal() {
+    const modal = document.getElementById('graphModal');
+    modal.style.display = 'none';
 }
 
 // Initial load
@@ -330,7 +458,7 @@ function initialLoad() {
                 }, { passive: false });
             }
             
-            // NEW: Attach export button event
+            // Attach export button event
             const exportBtn = document.getElementById('exportBtn');
             if (exportBtn) {
                 exportBtn.addEventListener('click', exportToCSV);
@@ -339,6 +467,27 @@ function initialLoad() {
                     exportToCSV();
                 }, { passive: false });
             }
+            
+            // NEW: Attach graph button event
+            const graphBtn = document.getElementById('graphBtn');
+            if (graphBtn) {
+                graphBtn.addEventListener('click', showGraph);
+                graphBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    showGraph();
+                }, { passive: false });
+            }
+            
+            // Attach modal close events
+            const modal = document.getElementById('graphModal');
+            const closeBtn = document.querySelector('.modal-close');
+            
+            closeBtn.addEventListener('click', closeModal);
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
         }
     });
 }
