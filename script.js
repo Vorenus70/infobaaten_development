@@ -148,19 +148,26 @@ function updateLatestCard() {
     }
 }
 
-// Refresh data function
+function showToast(message, isError = false) {
+    let toast = document.querySelector('.refresh-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'refresh-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.backgroundColor = isError ? '#c5221f' : '#0d652d';
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
+}
+
 function refreshData() {
     const refreshBtn = document.getElementById('refreshBtn');
     const originalContent = refreshBtn.innerHTML;
     
-    refreshBtn.innerHTML = `
-        <svg class="action-icon spinning" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 4v6h-6"/>
-            <path d="M1 20v-6h6"/>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/>
-            <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-        </svg>
-    `;
+    refreshBtn.innerHTML = `<svg class="action-icon spinning" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`;
     refreshBtn.disabled = true;
     
     Papa.parse(CSV_URL, {
@@ -187,47 +194,16 @@ function refreshData() {
             
             refreshBtn.innerHTML = originalContent;
             refreshBtn.disabled = false;
-            
-            let toast = document.querySelector('.refresh-toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.className = 'refresh-toast';
-                document.body.appendChild(toast);
-            }
-            toast.textContent = '✓ Data oppdatert';
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-            
-            const latestUpdatedElem = document.getElementById('latestUpdated');
-            if (latestUpdatedElem && allRows[0] && allRows[0].Timestamp) {
-                latestUpdatedElem.textContent = `Oppdatert: ${allRows[0].Timestamp}`;
-            }
+            showToast('✓ Data oppdatert');
         },
-        error: function(error) {
-            console.error("Refresh failed:", error);
+        error: function() {
             refreshBtn.innerHTML = originalContent;
             refreshBtn.disabled = false;
-            
-            let toast = document.querySelector('.refresh-toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.className = 'refresh-toast';
-                document.body.appendChild(toast);
-            }
-            toast.textContent = '❌ Kunne ikke oppdatere';
-            toast.style.backgroundColor = '#c5221f';
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.style.backgroundColor = '#0d652d';
-            }, 2000);
+            showToast('❌ Kunne ikke oppdatere', true);
         }
     });
 }
 
-// Export to CSV function
 function exportToCSV() {
     const selectedYear = document.getElementById('yearSelect').value;
     
@@ -237,19 +213,7 @@ function exportToCSV() {
     }
     
     if (exportRows.length === 0) {
-        let toast = document.querySelector('.refresh-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.className = 'refresh-toast';
-            document.body.appendChild(toast);
-        }
-        toast.textContent = '❌ Ingen data å eksportere';
-        toast.style.backgroundColor = '#c5221f';
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-            toast.style.backgroundColor = '#0d652d';
-        }, 2000);
+        showToast('❌ Ingen data å eksportere', true);
         return;
     }
     
@@ -278,27 +242,15 @@ function exportToCSV() {
     
     link.setAttribute('href', url);
     link.setAttribute('download', fileName);
-    link.style.visibility = 'hidden';
+    link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    let toast = document.querySelector('.refresh-toast');
-    if (!toast) {
-        toast = document.createElement('div');
-        toast.className = 'refresh-toast';
-        document.body.appendChild(toast);
-    }
-    toast.textContent = `✓ Eksportert ${exportRows.length} rader`;
-    toast.style.backgroundColor = '#0d652d';
-    toast.classList.add('show');
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 2000);
+    showToast(`✓ Eksportert ${exportRows.length} rader`);
 }
 
-// NEW: Show Graph function
 function showGraph() {
     const selectedYear = document.getElementById('yearSelect').value;
     
@@ -308,29 +260,17 @@ function showGraph() {
     }
     
     if (graphRows.length === 0) {
-        let toast = document.querySelector('.refresh-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.className = 'refresh-toast';
-            document.body.appendChild(toast);
-        }
-        toast.textContent = '❌ Ingen data å vise graf for';
-        toast.style.backgroundColor = '#c5221f';
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-            toast.style.backgroundColor = '#0d652d';
-        }, 2000);
+        showToast('❌ Ingen data å vise graf for', true);
         return;
     }
     
-    // Take last 30 days for better readability, or all if less
     const displayRows = graphRows.slice(0, 30);
     const labels = [];
     const changeData = [];
     const backgroundColors = [];
     
-    displayRows.reverse().forEach(row => {
+    // Reverse to show oldest to newest (left to right)
+    [...displayRows].reverse().forEach(row => {
         labels.push(formatDateForChart(row.Date));
         const changeCm = row["Change cm/m"];
         let changeNum = parseFloat(changeCm);
@@ -350,7 +290,6 @@ function showGraph() {
         }
     });
     
-    // Destroy existing chart if any
     if (chartInstance) {
         chartInstance.destroy();
     }
@@ -376,58 +315,35 @@ function showGraph() {
                     callbacks: {
                         label: function(context) {
                             let value = context.raw;
-                            if (value > 0) {
-                                return `Stigning: +${value} cm`;
-                            } else if (value < 0) {
-                                return `Fall: ${value} cm`;
-                            }
+                            if (value > 0) return `Stigning: +${value} cm`;
+                            if (value < 0) return `Fall: ${value} cm`;
                             return `Ingen endring: 0 cm`;
                         }
                     }
                 },
-                legend: {
-                    display: false
-                }
+                legend: { display: false }
             },
             scales: {
                 y: {
-                    title: {
-                        display: true,
-                        text: 'Endring (cm)',
-                        color: '#5f6368'
-                    },
-                    grid: {
-                        color: '#e0e5eb'
-                    }
+                    title: { display: true, text: 'Endring (cm)', color: '#5f6368' },
+                    grid: { color: '#e0e5eb' }
                 },
                 x: {
-                    title: {
-                        display: true,
-                        text: 'Dato',
-                        color: '#5f6368'
-                    },
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
+                    title: { display: true, text: 'Dato', color: '#5f6368' },
+                    ticks: { maxRotation: 45, minRotation: 45 }
                 }
             }
         }
     });
     
-    // Show modal
-    const modal = document.getElementById('graphModal');
-    modal.style.display = 'block';
+    document.getElementById('graphModal').style.display = 'block';
 }
 
-// Close modal function
 function closeModal() {
-    const modal = document.getElementById('graphModal');
-    modal.style.display = 'none';
+    document.getElementById('graphModal').style.display = 'none';
 }
 
-// Initial load
-function initialLoad() {
+function init() {
     Papa.parse(CSV_URL, {
         download: true,
         header: true,
@@ -443,54 +359,21 @@ function initialLoad() {
             populateYearOptions();
             updateLatestCard();
             
-            const select = document.getElementById('yearSelect');
-            select.addEventListener('change', function() {
+            document.getElementById('yearSelect').addEventListener('change', function() {
                 renderTable(this.value);
             });
             
-            // Attach refresh button event
-            const refreshBtn = document.getElementById('refreshBtn');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', refreshData);
-                refreshBtn.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    refreshData();
-                }, { passive: false });
-            }
+            // Simple direct button attachments that work everywhere
+            document.getElementById('refreshBtn').onclick = function(e) { e.preventDefault(); refreshData(); };
+            document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
+            document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
             
-            // Attach export button event
-            const exportBtn = document.getElementById('exportBtn');
-            if (exportBtn) {
-                exportBtn.addEventListener('click', exportToCSV);
-                exportBtn.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    exportToCSV();
-                }, { passive: false });
-            }
-            
-            // NEW: Attach graph button event
-            const graphBtn = document.getElementById('graphBtn');
-            if (graphBtn) {
-                graphBtn.addEventListener('click', showGraph);
-                graphBtn.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    showGraph();
-                }, { passive: false });
-            }
-            
-            // Attach modal close events
-            const modal = document.getElementById('graphModal');
-            const closeBtn = document.querySelector('.modal-close');
-            
-            closeBtn.addEventListener('click', closeModal);
-            window.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    closeModal();
-                }
-            });
+            document.querySelector('.modal-close').onclick = closeModal;
+            window.onclick = function(event) {
+                if (event.target === document.getElementById('graphModal')) closeModal();
+            };
         }
     });
 }
 
-// Start everything
-initialLoad();
+init();
