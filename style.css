@@ -1,9 +1,204 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background-color: #eef7ff;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Grey wrapper like Google Sites */
+.site-wrapper {
+    max-width: 100%;
+    background-color: #eef7ff;
+    min-height: 100vh;
+    padding: 40px 32px;
+}
+
+/* Page header - PIMPED UP */
+.site-header {
+    max-width: 1200px;
+    margin: 0 auto 24px auto;
+    padding: 0 8px 8px 8px;
+}
+
+.site-header h1 {
+    font-size: 24px;
+    font-weight: 500;
+    background: linear-gradient(135deg, #1a73e8, #0b5e7e);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin: 0;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+    display: inline-block;
+    padding-bottom: 4px;
+    border-bottom: 3px solid #1b8cae;
+}
+
+/* White dashboard card */
+.dashboard-card {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1), 0 2px 6px 2px rgba(0,0,0,0.05);
+    border: 1px solid #dadce0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Blue header inside card */
+.dashboard-header {
+    background: linear-gradient(135deg, #0b5e7e, #1b8cae);
+    color: white;
+    padding: 20px 28px;
+    text-align: center;
+    border-radius: 12px 12px 0 0;
+}
+
+.dashboard-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.dashboard-header p {
+    margin: 8px 0 0;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+/* Latest Water Level Card - COMPACT VERSION */
+.latest-card {
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    border-radius: 12px;
+    margin: 12px 20px 8px 20px;
+    padding: 10px 20px;
+    border: 1px solid #e0e5eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.latest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #5f6368;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #e0e5eb;
+}
+
+.latest-updated {
+    font-size: 10px;
+    color: #9aa0a6;
+}
+
+.latest-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.latest-value {
+    font-size: 32px;
+    font-weight: 600;
+    color: #0b5e7e;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.latest-value::after {
+    content: " moh";
+    font-size: 13px;
+    font-weight: 400;
+    color: #5f6368;
+}
+
+.latest-change {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 30px;
+    background-color: #f1f3f4;
+}
+
+.change-arrow {
+    font-size: 16px;
+}
+
+.change-value {
+    font-size: 16px;
+}
+
+.latest-change.positive {
+    color: #0d652d;
+    background-color: #e6f4ea;
+}
+
+.latest-change.negative {
+    color: #c5221f;
+    background-color: #fce8e6;
+}
+
+.latest-change.neutral {
+    color: #5f6368;
+    background-color: #f1f3f4;
+}
+
+/* Filter bar */
+.filter-bar {
+    padding: 12px 28px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dadce0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filter-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-left label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #5f6368;
+    white-space: nowrap;
+}
+
+.filter-left select {
+    padding: 6px 10px;
+    font-size: 13px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    color: #202124;
+}
+
 /* Action buttons (Refresh, Export, Graph) */
 .action-buttons {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: 16px;
 }
 
 .action-btn {
@@ -31,24 +226,246 @@
     display: block;
 }
 
-/* Mobile adjustments */
+/* Scrollable table container */
+.table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 55vh;
+    min-height: 300px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #e8eaed;
+    text-align: left;
+    vertical-align: top;
+}
+
+.data-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #5f6368;
+    position: sticky;
+    top: 0;
+    border-bottom: 1px solid #dadce0;
+}
+
+.data-table td:nth-child(4),
+.data-table th:nth-child(4) {
+    text-align: center;
+}
+
+.data-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.month-divider td {
+    background-color: #e8eaed;
+    font-weight: 600;
+    text-align: center;
+    padding: 8px;
+    color: #5f6368;
+    font-size: 12px;
+}
+
+.col-timestamp { width: 15%; }
+.col-date { width: 15%; }
+.col-waterlevel { width: 20%; }
+.col-change-raw { width: 25%; }
+.col-change-cm { width: 25%; }
+
+/* Dashboard footer */
+.dashboard-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dadce0;
+    padding: 28px 28px 24px 28px;
+    margin-top: 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.facebook-btn {
+    background: linear-gradient(135deg, #1877f2, #0e63b0);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.facebook-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+.footer-copyright {
+    font-size: 12px;
+    color: #5f6368;
+}
+
+/* Mobile styles */
 @media (max-width: 768px) {
+    .hide-on-mobile {
+        display: none;
+    }
+    
+    .site-wrapper {
+        padding: 20px 16px;
+    }
+    
+    .site-header {
+        padding: 0 4px 16px 4px;
+        margin-bottom: 16px;
+    }
+    
+    .site-header h1 {
+        font-size: 18px;
+        white-space: normal;
+        border-bottom-width: 2px;
+    }
+    
+    .dashboard-card {
+        border-radius: 8px;
+    }
+    
+    .dashboard-header {
+        padding: 14px 16px;
+        border-radius: 8px 8px 0 0;
+    }
+    
+    .dashboard-header h2 {
+        font-size: 18px;
+    }
+    
+    .dashboard-header p {
+        font-size: 10px;
+    }
+    
+    /* Latest card mobile - COMPACT */
+    .latest-card {
+        margin: 8px 12px 6px 12px;
+        padding: 8px 14px;
+    }
+    
+    .latest-header {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+    
+    .latest-updated {
+        font-size: 9px;
+    }
+    
+    .latest-value {
+        font-size: 26px;
+    }
+    
+    .latest-value::after {
+        font-size: 11px;
+    }
+    
+    .latest-change {
+        font-size: 13px;
+        padding: 3px 8px;
+        gap: 4px;
+    }
+    
+    .change-arrow {
+        font-size: 14px;
+    }
+    
+    .change-value {
+        font-size: 13px;
+    }
+    
+    /* Filter bar mobile */
     .filter-bar {
-        flex-wrap: wrap;
-        gap: 8px;
+        padding: 10px 16px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-left {
+        justify-content: space-between;
     }
     
     .action-buttons {
-        margin-left: 0;
-        gap: 6px;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 4px;
     }
     
     .action-btn {
-        padding: 5px;
+        padding: 8px;
     }
     
     .action-icon {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+    
+    .table-wrapper {
+        max-height: 50vh;
+        min-height: 250px;
+    }
+    
+    .dashboard-footer {
+        padding: 24px 16px 20px 16px;
+    }
+    
+    .facebook-btn {
+        padding: 6px 14px;
+        font-size: 12px;
+    }
+    
+    .footer-copyright {
+        font-size: 10px;
+    }
+}
+
+/* Desktop large screens */
+@media (min-width: 1200px) {
+    .site-wrapper {
+        padding: 48px 40px;
+    }
+    
+    .site-header h1 {
+        font-size: 28px;
+    }
+    
+    .dashboard-header {
+        padding: 24px 32px;
+    }
+    
+    .filter-bar {
+        padding: 14px 32px;
+    }
+    
+    .dashboard-footer {
+        padding: 32px 32px 26px 32px;
     }
 }
