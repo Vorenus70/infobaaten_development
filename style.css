@@ -76,12 +76,12 @@ body {
     opacity: 0.9;
 }
 
-/* Latest Water Level Card */
+/* Latest Water Level Card - COMPACT VERSION */
 .latest-card {
     background: linear-gradient(135deg, #f8f9fa, #ffffff);
     border-radius: 12px;
-    margin: 16px 20px 12px 20px;
-    padding: 16px 20px;
+    margin: 12px 20px 8px 20px;
+    padding: 10px 20px;
     border: 1px solid #e0e5eb;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
@@ -90,36 +90,37 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 11px;
     color: #5f6368;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
     border-bottom: 1px dashed #e0e5eb;
 }
 
 .latest-updated {
-    font-size: 11px;
+    font-size: 10px;
     color: #9aa0a6;
 }
 
 .latest-content {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
 }
 
 .latest-value {
-    font-size: 36px;
+    font-size: 32px;
     font-weight: 600;
     color: #0b5e7e;
     letter-spacing: -0.5px;
+    line-height: 1.2;
 }
 
 .latest-value::after {
     content: " moh";
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
     color: #5f6368;
 }
@@ -127,20 +128,20 @@ body {
 .latest-change {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 18px;
+    gap: 5px;
+    font-size: 16px;
     font-weight: 500;
-    padding: 6px 12px;
+    padding: 4px 10px;
     border-radius: 30px;
     background-color: #f1f3f4;
 }
 
 .change-arrow {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .change-value {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .latest-change.positive {
@@ -324,31 +325,41 @@ body {
         font-size: 10px;
     }
     
-    /* Latest card mobile */
+    /* Latest card mobile - COMPACT */
     .latest-card {
-        margin: 12px 12px 8px 12px;
-        padding: 12px 16px;
+        margin: 8px 12px 6px 12px;
+        padding: 8px 14px;
+    }
+    
+    .latest-header {
+        font-size: 10px;
+        margin-bottom: 4px;
+    }
+    
+    .latest-updated {
+        font-size: 9px;
     }
     
     .latest-value {
-        font-size: 28px;
+        font-size: 26px;
     }
     
     .latest-value::after {
-        font-size: 12px;
+        font-size: 11px;
     }
     
     .latest-change {
-        font-size: 14px;
-        padding: 4px 10px;
+        font-size: 13px;
+        padding: 3px 8px;
+        gap: 4px;
     }
     
     .change-arrow {
-        font-size: 16px;
+        font-size: 14px;
     }
     
     .change-value {
-        font-size: 14px;
+        font-size: 13px;
     }
     
     .filter-bar {
