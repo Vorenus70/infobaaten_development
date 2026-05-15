@@ -250,11 +250,15 @@ function initialLoad() {
                 renderTable(this.value);
             });
             
-            // Attach refresh button event
-            const refreshBtn = document.getElementById('refreshBtn');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', refreshData);
-            }
+            // Attach refresh button event (with touch support for mobile)
+const refreshBtn = document.getElementById('refreshBtn');
+if (refreshBtn) {
+    refreshBtn.addEventListener('click', refreshData);
+    refreshBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        refreshData();
+    }, { passive: false });
+}
         }
     });
 }
