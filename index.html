@@ -6,7 +6,8 @@
     <title>InfoBåten – Vannstand Osensjøen</title>
     <meta name="description" content="Sanntids vannstandhistorikk for Osensjøen. Data oppdateres daglig fra GLB.">
     <meta name="author" content="InfoBåten">
-<link rel="icon" type="image/png" href="https://emojicdn.elk.sh/🚤">   
+    <!-- Favicon - boat emoji -->
+    <link rel="icon" type="image/png" href="https://emojicdn.elk.sh/🚤">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,6 +24,21 @@
             <div class="dashboard-header">
                 <h2>🚤 Osensjøen – Vannstandhistorikk</h2>
                 <p>Oppdateres daglig automatisk | Data fra GLB</p>
+            </div>
+
+            <!-- NEW: Latest Water Level Card -->
+            <div class="latest-card" id="latestCard">
+                <div class="latest-header">
+                    <span>📊 Siste måling</span>
+                    <span class="latest-updated" id="latestUpdated">Laster...</span>
+                </div>
+                <div class="latest-content">
+                    <div class="latest-value" id="latestValue">--.--</div>
+                    <div class="latest-change" id="latestChange">
+                        <span class="change-arrow"></span>
+                        <span class="change-value"></span>
+                    </div>
+                </div>
             </div>
 
             <!-- Filter bar -->
