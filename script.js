@@ -141,12 +141,11 @@ function updateLatestCard() {
     }
 }
 
-// NEW: Refresh data function
+// Refresh data function
 function refreshData() {
     const refreshBtn = document.getElementById('refreshBtn');
     const originalContent = refreshBtn.innerHTML;
     
-    // Show loading spinner
     refreshBtn.innerHTML = `
         <svg class="action-icon spinning" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 4v6h-6"/>
@@ -157,7 +156,6 @@ function refreshData() {
     `;
     refreshBtn.disabled = true;
     
-    // Fetch fresh data
     Papa.parse(CSV_URL, {
         download: true,
         header: true,
@@ -170,11 +168,9 @@ function refreshData() {
                 return dateB - dateA;
             });
             
-            // Update UI
             const currentYear = document.getElementById('yearSelect').value;
             populateYearOptions();
             
-            // Restore selected year after refresh
             const select = document.getElementById('yearSelect');
             if (select.querySelector(`option[value="${currentYear}"]`)) {
                 select.value = currentYear;
@@ -182,11 +178,9 @@ function refreshData() {
             renderTable(select.value);
             updateLatestCard();
             
-            // Restore button
             refreshBtn.innerHTML = originalContent;
             refreshBtn.disabled = false;
             
-            // Show toast notification
             let toast = document.querySelector('.refresh-toast');
             if (!toast) {
                 toast = document.createElement('div');
@@ -199,7 +193,6 @@ function refreshData() {
                 toast.classList.remove('show');
             }, 2000);
             
-            // Update timestamp from actual data
             const latestUpdatedElem = document.getElementById('latestUpdated');
             if (latestUpdatedElem && allRows[0] && allRows[0].Timestamp) {
                 latestUpdatedElem.textContent = `Oppdatert: ${allRows[0].Timestamp}`;
@@ -210,7 +203,6 @@ function refreshData() {
             refreshBtn.innerHTML = originalContent;
             refreshBtn.disabled = false;
             
-            // Show error toast
             let toast = document.querySelector('.refresh-toast');
             if (!toast) {
                 toast = document.createElement('div');
@@ -226,6 +218,84 @@ function refreshData() {
             }, 2000);
         }
     });
+}
+
+// NEW: Export to CSV function
+function exportToCSV() {
+    const selectedYear = document.getElementById('yearSelect').value;
+    
+    let exportRows = allRows;
+    if (selectedYear !== 'all') {
+        exportRows = allRows.filter(row => getYear(row.Date) === parseInt(selectedYear, 10));
+    }
+    
+    if (exportRows.length === 0) {
+        let toast = document.querySelector('.refresh-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.className = 'refresh-toast';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = '❌ Ingen data å eksportere';
+        toast.style.backgroundColor = '#c5221f';
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.style.backgroundColor = '#0d652d';
+        }, 2000);
+        return;
+    }
+    
+    // Prepare CSV data
+    const headers = ['Tid', 'Dato', 'Vannstand (moh)', 'Endring m', 'Endring cm'];
+    const csvRows = [headers];
+    
+    exportRows.forEach(row => {
+        csvRows.push([
+            row.Timestamp || '',
+            row.Date || '',
+            row["Water Level (moh)"] || '',
+            row["Change vs yesterday"] || '',
+            row["Change cm/m"] || ''
+        ]);
+    });
+    
+    // Convert to CSV string
+    const csvContent = csvRows.map(row => row.join(';')).join('\n');
+    
+    // Add BOM for Norwegian characters
+    const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    // Create download link
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const today = new Date();
+    const dateStr = today.toISOString().slice(0, 10);
+    const fileName = selectedYear === 'all' 
+        ? `vannstand_osensjoen_alle_${dateStr}.csv`
+        : `vannstand_osensjoen_${selectedYear}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    // Show success toast
+    let toast = document.querySelector('.refresh-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'refresh-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = `✓ Eksportert ${exportRows.length} rader`;
+    toast.style.backgroundColor = '#0d652d';
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
 }
 
 // Initial load
@@ -250,15 +320,25 @@ function initialLoad() {
                 renderTable(this.value);
             });
             
-            // Attach refresh button event (with touch support for mobile)
-const refreshBtn = document.getElementById('refreshBtn');
-if (refreshBtn) {
-    refreshBtn.addEventListener('click', refreshData);
-    refreshBtn.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        refreshData();
-    }, { passive: false });
-}
+            // Attach refresh button event
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshData);
+                refreshBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    refreshData();
+                }, { passive: false });
+            }
+            
+            // NEW: Attach export button event
+            const exportBtn = document.getElementById('exportBtn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', exportToCSV);
+                exportBtn.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    exportToCSV();
+                }, { passive: false });
+            }
         }
     });
 }
