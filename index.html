@@ -9,6 +9,8 @@
     <!-- Favicon - boat emoji -->
     <link rel="icon" type="image/png" href="https://emojicdn.elk.sh/🚤">
     <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Grey page wrapper (like Google Sites) -->
@@ -60,7 +62,7 @@
                         </svg>
                     </button>
                     <!-- Export CSV button -->
-                    <button class="action-btn" id="exportBtn" title="Last ned CSV">
+                    <button class="action-btn" id="exportBtn" title="Last ned CSV" style="cursor: pointer; touch-action: manipulation;">
                         <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                             <polyline points="7 10 12 15 17 10"/>
@@ -68,7 +70,7 @@
                         </svg>
                     </button>
                     <!-- Graph button -->
-                    <button class="action-btn" id="graphBtn" title="Vis graf">
+                    <button class="action-btn" id="graphBtn" title="Vis graf" style="cursor: pointer; touch-action: manipulation;">
                         <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M18 20V10"/>
                             <path d="M12 20V4"/>
@@ -105,6 +107,20 @@
                         © 2026 InfoBåten
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graph Modal -->
+    <div id="graphModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">📊 Vannstandsendring (cm)</span>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <canvas id="graphCanvas"></canvas>
+                <div class="modal-note">Grønne søyler = stigning | Røde søyler = fall</div>
             </div>
         </div>
     </div>
