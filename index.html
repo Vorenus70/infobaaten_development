@@ -208,17 +208,19 @@
                 </table>
             </div>
 
-            <div class="dashboard-footer">
-                <div class="footer-content">
+                        <div class="dashboard-footer">
+                <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
                     <a href="https://www.facebook.com/infobaaten" target="_blank" rel="noopener noreferrer" class="facebook-btn">
                         <span>👍</span> Like på Facebook
                     </a>
+                    <div class="app-version" id="appVersionDisplay" style="font-size: 11px; color: #5f6368;">
+                        v<span id="versionNumber">---</span>
+                    </div>
                     <div class="footer-copyright">
                         © 2026 InfoBåten
                     </div>
                 </div>
             </div>
-        </div>
     </div>
 
     <!-- Graph Modal -->
@@ -243,6 +245,14 @@
     // ⚠️ UPDATE THIS VERSION NUMBER WHEN YOU RELEASE A NEW VERSION ⚠️
     const APP_VERSION = "1.0.5";
     const VERSION_URL = "/infobaaten_development/version.json";
+
+        <script>
+    // Display the hardcoded app version in the footer
+    const versionNumber = document.getElementById('versionNumber');
+    if (versionNumber) {
+        versionNumber.innerText = APP_VERSION;
+    }
+</script>
     
     function showUpdateBanner(message) {
         if (document.querySelector('.update-banner')) return;
