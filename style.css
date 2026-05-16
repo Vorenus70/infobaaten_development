@@ -599,3 +599,89 @@ body {
         padding: 32px 32px 26px 32px;
     }
 }
+
+/* Update banner */
+.update-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #0b5e7e;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    z-index: 2000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.update-banner button {
+    background: white;
+    color: #0b5e7e;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.update-banner button:hover {
+    background: #e8eaed;
+}
+
+/* Update modal */
+.update-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2001;
+}
+
+.update-modal-content {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+}
+
+.update-modal-content h3 {
+    margin-top: 0;
+    color: #0b5e7e;
+}
+
+.update-modal-content ol {
+    text-align: left;
+    margin: 16px 0;
+    padding-left: 20px;
+}
+
+.update-modal-content button {
+    background: #0b5e7e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .update-banner {
+        font-size: 12px;
+        padding: 8px 16px;
+        white-space: normal;
+        text-align: center;
+    }
+}
