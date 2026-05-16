@@ -21,15 +21,15 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Service Worker Registration -->
-    <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/infobaaten_development/sw.js')
-                .then(reg => console.log('✅ Service Worker registered:', reg))
-                .catch(err => console.log('❌ Service Worker error:', err));
-        });
-    }
-    </script>
+  <script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/infobaaten_development/sw.js')
+            .then(reg => console.log('✅ Service Worker registered:', reg))
+            .catch(err => console.log('❌ Service Worker error:', err));
+    });
+}
+</script>
 </head>
 <body>
     <div class="site-wrapper">
