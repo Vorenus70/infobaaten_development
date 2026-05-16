@@ -211,8 +211,10 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
     
-    <!-- Version Detection - Single source of truth -->
+    <!-- Version Detection - Hardcoded version (reliable) -->
     <script>
+    // ⚠️ UPDATE THIS VERSION NUMBER WHEN YOU RELEASE A NEW VERSION ⚠️
+    const APP_VERSION = "1.0.0";
     const VERSION_URL = "/infobaaten_development/version.json";
     
     function showUpdateBanner(message) {
@@ -254,19 +256,13 @@
         fetch(VERSION_URL + "?t=" + Date.now())
             .then(response => response.json())
             .then(data => {
-                const storedVersion = localStorage.getItem('infobaaten_version');
-                console.log("Stored version:", storedVersion);
+                console.log("App version (hardcoded):", APP_VERSION);
                 console.log("Server version:", data.version);
-                
-                if (!storedVersion) {
-                    // First run - store current version
-                    localStorage.setItem('infobaaten_version', data.version);
-                    console.log("First run - version stored:", data.version);
-                } else if (storedVersion !== data.version) {
-                    console.log("Update available! Showing banner.");
+                if (data.version !== APP_VERSION) {
+                    console.log("✅ Update available! Showing banner.");
                     showUpdateBanner(data.message);
                 } else {
-                    console.log("App is up to date.");
+                    console.log("✅ App is up to date.");
                 }
             })
             .catch(err => console.log("Version check failed:", err));
