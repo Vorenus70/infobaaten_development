@@ -135,5 +135,58 @@ if ('serviceWorker' in navigator) {
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
+
+    <script>
+// Version check – show banner if new version available
+const CURRENT_VERSION = "1.0.0";
+const VERSION_URL = "/infobaaten_development/version.json";
+
+function checkVersion() {
+    fetch(VERSION_URL + "?t=" + Date.now()) // No cache
+        .then(response => response.json())
+        .then(data => {
+            if (data.version !== CURRENT_VERSION) {
+                showUpdateBanner(data.message);
+            }
+        })
+        .catch(err => console.log("Version check failed:", err));
+}
+
+function showUpdateBanner(message) {
+    // Check if banner already exists
+    if (document.querySelector('.update-banner')) return;
+    
+    const banner = document.createElement('div');
+    banner.className = 'update-banner';
+    banner.innerHTML = `
+        <span>🔄 ${message}</span>
+        <button onclick="showUpdateInstructions()">Oppdater</button>
+        <button onclick="this.parentElement.remove()">✕</button>
+    `;
+    document.body.appendChild(banner);
+}
+
+function showUpdateInstructions() {
+    const modal = document.createElement('div');
+    modal.className = 'update-modal';
+    modal.innerHTML = `
+        <div class="update-modal-content">
+            <h3>🔄 Oppdatering tilgjengelig</h3>
+            <p>Følg disse stegene for å oppdatere appen:</p>
+            <ol>
+                <li>Trykk og hold på app-ikonet på hjem-skjermen</li>
+                <li>Velg "Fjern" eller "Avinstaller"</li>
+                <li>Åpne Chrome og gå til infobaaten.no</li>
+                <li>Trykk "Installer app" når du blir spurt</li>
+            </ol>
+            <button onclick="this.parentElement.parentElement.remove()">Lukk</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// Check version on load
+checkVersion();
+</script>
 </body>
 </html>
