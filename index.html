@@ -19,114 +19,13 @@
     <meta name="apple-mobile-web-app-title" content="InfoBåten">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-    <!-- Banner CSS (inline to ensure it works) -->
-    <style>
-        .update-banner {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #0b5e7e;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 50px;
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            z-index: 2000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            font-size: 14px;
-            white-space: nowrap;
-        }
-        .update-banner button {
-            background: white;
-            color: #0b5e7e;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .update-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2001;
-        }
-        .update-modal-content {
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            max-width: 320px;
-            width: 90%;
-            text-align: center;
-        }
-        .update-modal-content h3 {
-            margin-top: 0;
-            color: #0b5e7e;
-        }
-        .update-modal-content ol {
-            text-align: left;
-            margin: 16px 0;
-            padding-left: 20px;
-        }
-        .update-modal-content button {
-            background: #0b5e7e;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        @media (max-width: 768px) {
-            .update-banner {
-                font-size: 12px;
-                padding: 8px 16px;
-                white-space: normal;
-                text-align: center;
-            }
-        }
-    </style>
-
     <!-- Service Worker Registration -->
     <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/infobaaten_development/sw.js')
-                .then(reg => {
-                    console.log('✅ Service Worker registered:', reg);
-                    
-                    reg.addEventListener('updatefound', () => {
-                        const newWorker = reg.installing;
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'activated') {
-                                console.log('New service worker activated – re-checking version');
-                                setTimeout(() => {
-                                    if (typeof checkVersion === 'function') {
-                                        checkVersion();
-                                    }
-                                }, 500);
-                            }
-                        });
-                    });
-                })
+                .then(reg => console.log('✅ Service Worker registered:', reg))
                 .catch(err => console.log('❌ Service Worker error:', err));
-            
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                console.log('Service worker controller changed – re-checking version');
-                setTimeout(() => {
-                    if (typeof checkVersion === 'function') {
-                        checkVersion();
-                    }
-                }, 500);
-            });
         });
     }
     </script>
@@ -239,120 +138,28 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
     
-    <!-- Version Detection - Persistent Banner -->
+    <!-- Simple version display (no banner, no nagging) -->
     <script>
     // ⚠️ UPDATE THIS VERSION NUMBER WHEN YOU RELEASE A NEW VERSION ⚠️
     const APP_VERSION = "1.0.8";
-    const VERSION_URL = "/infobaaten_development/version.json";
     
-    // Display the hardcoded app version in the footer
-    const versionNumberElem = document.getElementById('versionNumber');
-    if (versionNumberElem) {
-        versionNumberElem.innerText = APP_VERSION;
+    // Display version in footer
+    const versionSpan = document.getElementById('versionNumber');
+    if (versionSpan) {
+        versionSpan.innerText = APP_VERSION;
     }
     
-    function showUpdateBanner(message) {
-        if (document.querySelector('.update-banner')) return;
-        
-        const banner = document.createElement('div');
-        banner.className = 'update-banner';
-        banner.innerHTML = `
-            <span>🔄 ${message}</span>
-            <button onclick="showUpdateInstructions()">Oppdater</button>
-            <button onclick="dismissUpdateBanner()">✕</button>
-        `;
-        document.body.appendChild(banner);
-    }
-    
-    function dismissUpdateBanner() {
-        const banner = document.querySelector('.update-banner');
-        if (banner) banner.remove();
-    }
-    
-    function showUpdateInstructions() {
-        const existingModal = document.querySelector('.update-modal');
-        if (existingModal) existingModal.remove();
-        
-        const modal = document.createElement('div');
-        modal.className = 'update-modal';
-        modal.innerHTML = `
-            <div class="update-modal-content">
-                <h3>🔄 Oppdatering tilgjengelig</h3>
-                <p>Følg disse stegene for å oppdatere appen:</p>
-                <ol>
-                    <li>Trykk og hold på app-ikonet på hjem-skjermen</li>
-                    <li>Velg "Fjern" eller "Avinstaller"</li>
-                    <li>Åpne Chrome og gå til infobaaten.no</li>
-                    <li>Trykk "Installer app" når du blir spurt</li>
-                </ol>
-                <button onclick="this.closest('.update-modal').remove()">Lukk</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    
-    function checkVersion() {
-        fetch(VERSION_URL + "?t=" + Date.now())
-            .then(response => {
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log("App version:", APP_VERSION);
-                console.log("Server version:", data.version);
-                
-                if (data.version && data.version !== APP_VERSION) {
-                    localStorage.setItem('infobaaten_update_pending', 'true');
-                    console.log("✅ Update available! Pending flag stored.");
-                    showUpdateBanner(data.message);
-                } else {
-                    localStorage.removeItem('infobaaten_update_pending');
-                    const existingBanner = document.querySelector('.update-banner');
-                    if (existingBanner) existingBanner.remove();
-                    console.log("✅ App is up to date.");
-                }
-            })
-            .catch(err => {
-                console.log("Version check failed:", err);
-            });
-    }
-    
-    function checkPendingUpdate() {
-        const updatePending = localStorage.getItem('infobaaten_update_pending');
-        if (updatePending === 'true') {
-            console.log("⚠️ Update pending from previous session – showing banner");
-            fetch(VERSION_URL + "?t=" + Date.now())
-                .then(response => response.json())
-                .then(data => {
-                    showUpdateBanner(data.message);
-                })
-                .catch(() => {
-                    showUpdateBanner("Ny versjon tilgjengelig! Trykk for å oppdatere.");
-                });
-        }
-    }
-    
-    // Run both checks on every load
-    checkVersion();
-    checkPendingUpdate();
-
-        // FORCE a re-check after the service worker might have reloaded the page
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-        console.log("Post-load version check");
-        checkVersion();
-        checkPendingUpdate();
-        }, 200);
-    });
-    
-    // Re-check when app comes to foreground
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            console.log("App came to foreground – re-checking");
-            checkVersion();
-            checkPendingUpdate();
-        }
-    });
+    // Optional: silently check version (console only – no banner)
+    fetch('/infobaaten_development/version.json?t=' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+            if (data.version !== APP_VERSION) {
+                console.log("📱 App version:", APP_VERSION);
+                console.log("🌐 Server version:", data.version);
+                console.log("ℹ️ Content auto-updates. No action needed.");
+            }
+        })
+        .catch(err => console.log("Version check failed:", err));
     </script>
 </body>
 </html>
