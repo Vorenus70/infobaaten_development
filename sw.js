@@ -1,4 +1,4 @@
-const CACHE_NAME = 'infobaaten-dev-v4';
+const CACHE_NAME = 'infobaaten-dev-v7';
 const urlsToCache = [
   '/infobaaten_development/',
   '/infobaaten_development/index.html',
@@ -16,18 +16,15 @@ self.addEventListener('install', event => {
   );
 });
 
-// Cache-first strategy – shows cached version immediately, updates in background
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(cached => {
       const fetchPromise = fetch(event.request).then(networkResponse => {
-        // Update cache with fresh response
         caches.open(CACHE_NAME).then(cache => {
           cache.put(event.request, networkResponse.clone());
         });
         return networkResponse;
       });
-      // Return cached version immediately, network response updates cache
       return cached || fetchPromise;
     })
   );
@@ -43,6 +40,12 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    }).then(() => {
+      return self.clients.matchAll({ type: 'window' }).then(clients => {
+        clients.forEach(client => {
+          client.navigate(client.url);
+        });
+      });
     }).then(() => {
       return self.clients.claim();
     })
