@@ -12,7 +12,7 @@
     {
       "src": "screenshots/mobile.jpg",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "InfoBåten hovedskjerm på mobil"
     },
