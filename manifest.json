@@ -5,8 +5,8 @@
   "description": "Vannstandhistorikk for Osensjøen – sanntidsoppdateringer",
   "start_url": "/infobaaten_development/",
   "display": "standalone",
-  "theme_color": "#0b5e7e",
-  "background_color": "#0b5e7e",
+  "theme_color": "0b5e7e",
+  "background_color": "0b5e7e",
   "orientation": "portrait",
   "screenshots": [
     {
