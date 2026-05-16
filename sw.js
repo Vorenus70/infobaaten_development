@@ -1,4 +1,4 @@
-const CACHE_NAME = 'infobaaten-dev-v1';
+const CACHE_NAME = 'infobaaten-dev-v2';  // ← CHANGED version number
 const urlsToCache = [
   '/infobaaten_development/',
   '/infobaaten_development/index.html',
@@ -14,17 +14,19 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
   );
+  // Force the waiting service worker to become active
+  self.skipWaiting();
 });
 
-// Fetch – serve from cache if offline
+// Fetch – serve from cache if offline, but always try network first
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
+    fetch(event.request)
+      .catch(() => caches.match(event.request))
   );
 });
 
-// Activate – clean old caches
+// Activate – clean old caches and take control immediately
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -35,6 +37,9 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    }).then(() => {
+      // Take control of all clients immediately
+      return self.clients.claim();
     })
   );
 });
