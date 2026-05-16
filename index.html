@@ -107,45 +107,6 @@
     </script>
 </head>
 <body>
-<!-- DEBUG PANEL - Remove after testing -->
-<div id="debug-panel" style="position: fixed; bottom: 10px; left: 10px; background: black; color: lime; font-size: 10px; padding: 5px; z-index: 9999; border-radius: 5px; max-width: 80%;">
-    Loading...
-</div>
-<script>
-    function debugLog(msg) {
-        const panel = document.getElementById('debug-panel');
-        if (panel) {
-            panel.innerHTML = msg + '<br>' + panel.innerHTML.split('<br>')[0];
-            console.log(msg);
-        }
-    }
-    
-    // Test immediate execution
-    debugLog('✅ Script started');
-    
-    // Test version check with visible feedback
-    setTimeout(() => {
-        fetch('/infobaaten_development/version.json?t=' + Date.now())
-            .then(r => r.json())
-            .then(data => {
-                debugLog('📦 Server version: ' + data.version);
-                debugLog('📱 Current version: 1.0.2');
-                if (data.version !== "1.0.0") {
-                    debugLog('🔔 UPDATE AVAILABLE!');
-                    // Try to show banner manually
-                    const banner = document.createElement('div');
-                    banner.style.cssText = 'position:fixed; bottom:100px; left:10px; right:10px; background:red; color:white; padding:15px; z-index:10000; text-align:center; border-radius:10px;';
-                    banner.innerHTML = '🔔 UPDATE AVAILABLE! Version ' + data.version + ' is ready.<br><button onclick="this.parentElement.remove()">OK</button>';
-                    document.body.appendChild(banner);
-                } else {
-                    debugLog('✅ App is up to date');
-                }
-            })
-            .catch(err => debugLog('❌ Fetch failed: ' + err.message));
-    }, 1000);
-</script>
-
-    
     <div class="site-wrapper">
         <div class="site-header">
             <h1>InfoBåten Vannstandhistorikk</h1>
@@ -250,10 +211,8 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
     
-    <!-- Version Detection -->
+    <!-- Version Detection - Single source of truth -->
     <script>
-    // FROZEN VERSION - This is the version of the INSTALLED app
-    const CURRENT_VERSION = "1.0.0";
     const VERSION_URL = "/infobaaten_development/version.json";
     
     function showUpdateBanner(message) {
@@ -295,13 +254,19 @@
         fetch(VERSION_URL + "?t=" + Date.now())
             .then(response => response.json())
             .then(data => {
-                console.log("Installed version:", CURRENT_VERSION);
+                const storedVersion = localStorage.getItem('infobaaten_version');
+                console.log("Stored version:", storedVersion);
                 console.log("Server version:", data.version);
-                if (data.version !== CURRENT_VERSION) {
-                    console.log("✅ Update available! Showing banner.");
+                
+                if (!storedVersion) {
+                    // First run - store current version
+                    localStorage.setItem('infobaaten_version', data.version);
+                    console.log("First run - version stored:", data.version);
+                } else if (storedVersion !== data.version) {
+                    console.log("Update available! Showing banner.");
                     showUpdateBanner(data.message);
                 } else {
-                    console.log("✅ App is up to date.");
+                    console.log("App is up to date.");
                 }
             })
             .catch(err => console.log("Version check failed:", err));
