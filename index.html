@@ -103,7 +103,6 @@
                 .then(reg => {
                     console.log('✅ Service Worker registered:', reg);
                     
-                    // Listen for service worker updates
                     reg.addEventListener('updatefound', () => {
                         const newWorker = reg.installing;
                         newWorker.addEventListener('statechange', () => {
@@ -120,7 +119,6 @@
                 })
                 .catch(err => console.log('❌ Service Worker error:', err));
             
-            // Listen for controller changes
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 console.log('Service worker controller changed – re-checking version');
                 setTimeout(() => {
@@ -208,12 +206,12 @@
                 </table>
             </div>
 
-                        <div class="dashboard-footer">
+            <div class="dashboard-footer">
                 <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
                     <a href="https://www.facebook.com/infobaaten" target="_blank" rel="noopener noreferrer" class="facebook-btn">
                         <span>👍</span> Like på Facebook
                     </a>
-                    <div class="app-version" id="appVersionDisplay" style="font-size: 11px; color: #5f6368;">
+                    <div class="app-version" style="font-size: 11px; color: #5f6368;">
                         v<span id="versionNumber">---</span>
                     </div>
                     <div class="footer-copyright">
@@ -221,6 +219,7 @@
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 
     <!-- Graph Modal -->
@@ -245,14 +244,12 @@
     // ⚠️ UPDATE THIS VERSION NUMBER WHEN YOU RELEASE A NEW VERSION ⚠️
     const APP_VERSION = "1.0.5";
     const VERSION_URL = "/infobaaten_development/version.json";
-
-        <script>
+    
     // Display the hardcoded app version in the footer
-    const versionNumber = document.getElementById('versionNumber');
-    if (versionNumber) {
-        versionNumber.innerText = APP_VERSION;
+    const versionNumberElem = document.getElementById('versionNumber');
+    if (versionNumberElem) {
+        versionNumberElem.innerText = APP_VERSION;
     }
-</script>
     
     function showUpdateBanner(message) {
         if (document.querySelector('.update-banner')) return;
@@ -270,7 +267,6 @@
     function dismissUpdateBanner() {
         const banner = document.querySelector('.update-banner');
         if (banner) banner.remove();
-        // Note: We do NOT clear the pending flag – banner will return next time
     }
     
     function showUpdateInstructions() {
@@ -306,12 +302,10 @@
                 console.log("Server version:", data.version);
                 
                 if (data.version && data.version !== APP_VERSION) {
-                    // Update available – store flag and show banner
                     localStorage.setItem('infobaaten_update_pending', 'true');
                     console.log("✅ Update available! Pending flag stored.");
                     showUpdateBanner(data.message);
                 } else {
-                    // No update – clear flag and remove banner
                     localStorage.removeItem('infobaaten_update_pending');
                     const existingBanner = document.querySelector('.update-banner');
                     if (existingBanner) existingBanner.remove();
@@ -320,7 +314,6 @@
             })
             .catch(err => {
                 console.log("Version check failed:", err);
-                // Don't show banner on error – assume app is up to date
             });
     }
     
