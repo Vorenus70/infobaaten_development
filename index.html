@@ -335,6 +335,15 @@
     // Run both checks on every load
     checkVersion();
     checkPendingUpdate();
+
+        // FORCE a re-check after the service worker might have reloaded the page
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+        console.log("Post-load version check");
+        checkVersion();
+        checkPendingUpdate();
+        }, 200);
+    });
     
     // Re-check when app comes to foreground
     document.addEventListener('visibilitychange', function() {
