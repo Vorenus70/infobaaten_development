@@ -103,7 +103,7 @@
                 .then(reg => {
                     console.log('✅ Service Worker registered:', reg);
                     
-                    // Listen for service worker updates (after reinstall)
+                    // Listen for service worker updates
                     reg.addEventListener('updatefound', () => {
                         const newWorker = reg.installing;
                         newWorker.addEventListener('statechange', () => {
@@ -120,7 +120,7 @@
                 })
                 .catch(err => console.log('❌ Service Worker error:', err));
             
-            // Also listen for controller changes (when service worker takes over)
+            // Listen for controller changes
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 console.log('Service worker controller changed – re-checking version');
                 setTimeout(() => {
@@ -213,10 +213,6 @@
                     <a href="https://www.facebook.com/infobaaten" target="_blank" rel="noopener noreferrer" class="facebook-btn">
                         <span>👍</span> Like på Facebook
                     </a>
-                    <div style="font-size: 10px; color: gray;">Buildd:<span id="buildTime"></span></div>
-<script>
-    document.getElementById('buildTime').innerText = new Date().toLocaleTimeString();
-</script>
                     <div class="footer-copyright">
                         © 2026 InfoBåten
                     </div>
@@ -242,10 +238,10 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
     
-    <!-- Version Detection - Hardcoded version (reliable) -->
+    <!-- Version Detection - Persistent Banner -->
     <script>
     // ⚠️ UPDATE THIS VERSION NUMBER WHEN YOU RELEASE A NEW VERSION ⚠️
-    const APP_VERSION = "1.0.4";
+    const APP_VERSION = "1.0.5";
     const VERSION_URL = "/infobaaten_development/version.json";
     
     function showUpdateBanner(message) {
@@ -256,9 +252,15 @@
         banner.innerHTML = `
             <span>🔄 ${message}</span>
             <button onclick="showUpdateInstructions()">Oppdater</button>
-            <button onclick="this.parentElement.remove()">✕</button>
+            <button onclick="dismissUpdateBanner()">✕</button>
         `;
         document.body.appendChild(banner);
+    }
+    
+    function dismissUpdateBanner() {
+        const banner = document.querySelector('.update-banner');
+        if (banner) banner.remove();
+        // Note: We do NOT clear the pending flag – banner will return next time
     }
     
     function showUpdateInstructions() {
@@ -286,40 +288,57 @@
     function checkVersion() {
         fetch(VERSION_URL + "?t=" + Date.now())
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('HTTP ' + response.status);
-                }
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 return response.json();
             })
             .then(data => {
-                console.log("App version (hardcoded):", APP_VERSION);
+                console.log("App version:", APP_VERSION);
                 console.log("Server version:", data.version);
+                
                 if (data.version && data.version !== APP_VERSION) {
-                    console.log("✅ Update available! Showing banner.");
+                    // Update available – store flag and show banner
+                    localStorage.setItem('infobaaten_update_pending', 'true');
+                    console.log("✅ Update available! Pending flag stored.");
                     showUpdateBanner(data.message);
                 } else {
-                    console.log("✅ App is up to date.");
-                    // Remove banner if it exists (from previous failed check)
+                    // No update – clear flag and remove banner
+                    localStorage.removeItem('infobaaten_update_pending');
                     const existingBanner = document.querySelector('.update-banner');
                     if (existingBanner) existingBanner.remove();
+                    console.log("✅ App is up to date.");
                 }
             })
             .catch(err => {
                 console.log("Version check failed:", err);
-                // DO NOT show banner on error – assume app is up to date
-                const existingBanner = document.querySelector('.update-banner');
-                if (existingBanner) existingBanner.remove();
+                // Don't show banner on error – assume app is up to date
             });
     }
     
-    // Check for updates when app loads
-    checkVersion();
+    function checkPendingUpdate() {
+        const updatePending = localStorage.getItem('infobaaten_update_pending');
+        if (updatePending === 'true') {
+            console.log("⚠️ Update pending from previous session – showing banner");
+            fetch(VERSION_URL + "?t=" + Date.now())
+                .then(response => response.json())
+                .then(data => {
+                    showUpdateBanner(data.message);
+                })
+                .catch(() => {
+                    showUpdateBanner("Ny versjon tilgjengelig! Trykk for å oppdatere.");
+                });
+        }
+    }
     
-    // Also check when app comes to foreground (for mobile)
+    // Run both checks on every load
+    checkVersion();
+    checkPendingUpdate();
+    
+    // Re-check when app comes to foreground
     document.addEventListener('visibilitychange', function() {
         if (!document.hidden) {
-            console.log("App came to foreground – re-checking version");
+            console.log("App came to foreground – re-checking");
             checkVersion();
+            checkPendingUpdate();
         }
     });
     </script>
