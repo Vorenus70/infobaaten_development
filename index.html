@@ -138,10 +138,10 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
     
-    <!-- Simple version display (no banner, no nagging) -->
+    <!-- Version check with auto-refresh on focus -->
     <script>
     // ⚠️ UPDATE THIS VERSION NUMBER WHEN YOU RELEASE A NEW VERSION ⚠️
-    const APP_VERSION = "1.0.0";
+    const APP_VERSION = "1.0.8";
     
     // Display version in footer
     const versionSpan = document.getElementById('versionNumber');
@@ -149,17 +149,31 @@
         versionSpan.innerText = APP_VERSION;
     }
     
-    // Optional: silently check version (console only – no banner)
-    fetch('/infobaaten_development/version.json?t=' + Date.now())
-        .then(r => r.json())
-        .then(data => {
-            if (data.version !== APP_VERSION) {
+    // Check version and refresh if needed
+    function checkAndRefresh() {
+        fetch('/infobaaten_development/version.json?t=' + Date.now())
+            .then(r => r.json())
+            .then(data => {
                 console.log("📱 App version:", APP_VERSION);
                 console.log("🌐 Server version:", data.version);
-                console.log("ℹ️ Content auto-updates. No action needed.");
-            }
-        })
-        .catch(err => console.log("Version check failed:", err));
+                if (data.version && data.version !== APP_VERSION) {
+                    console.log("🔄 New version available! Refreshing...");
+                    location.reload();
+                }
+            })
+            .catch(err => console.log("Version check failed:", err));
+    }
+    
+    // Check on every app load
+    checkAndRefresh();
+    
+    // Check every time app comes to foreground
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            console.log("App came to foreground – checking for updates");
+            checkAndRefresh();
+        }
+    });
     </script>
 </body>
 </html>
