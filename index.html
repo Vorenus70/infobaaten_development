@@ -129,7 +129,7 @@
             .then(r => r.json())
             .then(data => {
                 debugLog('📦 Server version: ' + data.version);
-                debugLog('📱 Current version: 1.0.0');
+                debugLog('📱 Current version: 1.0.2');
                 if (data.version !== "1.0.0") {
                     debugLog('🔔 UPDATE AVAILABLE!');
                     // Try to show banner manually
