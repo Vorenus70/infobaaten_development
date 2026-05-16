@@ -1,4 +1,4 @@
-const CACHE_NAME = 'infobaaten-dev-v3';  // ← INCREMENT THIS
+const CACHE_NAME = 'infobaaten-dev-v3';
 const urlsToCache = [
   '/infobaaten_development/',
   '/infobaaten_development/index.html',
@@ -8,16 +8,14 @@ const urlsToCache = [
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
 ];
 
-// Install – cache files and force activation
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())  // ← Forces waiting service worker to activate
+      .then(() => self.skipWaiting())
   );
 });
 
-// Fetch – network first, fallback to cache
 self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
@@ -25,7 +23,6 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Activate – clean old caches and take control immediately
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -37,7 +34,6 @@ self.addEventListener('activate', event => {
         })
       );
     }).then(() => {
-      // ← Take control of all open clients immediately
       return self.clients.claim();
     })
   );
