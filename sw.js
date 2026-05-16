@@ -1,4 +1,4 @@
-const CACHE_NAME = 'infobaaten-dev-v7';
+const CACHE_NAME = 'infobaaten-dev-v8';
 const urlsToCache = [
   '/infobaaten_development/',
   '/infobaaten_development/index.html',
@@ -17,6 +17,24 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  
+  // For HTML pages – STRICT cache-first (never go to network unless cache fails)
+  if (url.pathname === '/infobaaten_development/' || url.pathname === '/infobaaten_development/index.html') {
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) {
+          console.log('📦 Serving CACHED HTML (version from install)');
+          return cached;
+        }
+        console.log('🌐 No cache – fetching from network');
+        return fetch(event.request);
+      })
+    );
+    return;
+  }
+  
+  // For all other assets – cache-first with background update
   event.respondWith(
     caches.match(event.request).then(cached => {
       const fetchPromise = fetch(event.request).then(networkResponse => {
@@ -36,6 +54,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(name => {
           if (name !== CACHE_NAME) {
+            console.log('🗑️ Deleting old cache:', name);
             return caches.delete(name);
           }
         })
