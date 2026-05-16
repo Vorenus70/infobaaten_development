@@ -1,4 +1,4 @@
-const CACHE_NAME = 'infobaaten-dev-v8';
+const CACHE_NAME = 'infobaaten-dev-v9';
 const urlsToCache = [
   '/infobaaten_development/',
   '/infobaaten_development/index.html',
@@ -16,35 +16,23 @@ self.addEventListener('install', event => {
   );
 });
 
+// Network-first for HTML, cache-first for assets
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // For HTML pages – STRICT cache-first (never go to network unless cache fails)
+  // For HTML – always try network first, fallback to cache
   if (url.pathname === '/infobaaten_development/' || url.pathname === '/infobaaten_development/index.html') {
     event.respondWith(
-      caches.match(event.request).then(cached => {
-        if (cached) {
-          console.log('📦 Serving CACHED HTML (version from install)');
-          return cached;
-        }
-        console.log('🌐 No cache – fetching from network');
-        return fetch(event.request);
-      })
+      fetch(event.request)
+        .catch(() => caches.match(event.request))
     );
     return;
   }
   
-  // For all other assets – cache-first with background update
+  // For other assets – cache-first
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, networkResponse.clone());
-        });
-        return networkResponse;
-      });
-      return cached || fetchPromise;
-    })
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
   );
 });
 
@@ -54,17 +42,10 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(name => {
           if (name !== CACHE_NAME) {
-            console.log('🗑️ Deleting old cache:', name);
             return caches.delete(name);
           }
         })
       );
-    }).then(() => {
-      return self.clients.matchAll({ type: 'window' }).then(clients => {
-        clients.forEach(client => {
-          client.navigate(client.url);
-        });
-      });
     }).then(() => {
       return self.clients.claim();
     })
