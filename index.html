@@ -9,6 +9,8 @@
     <link rel="icon" type="image/png" href="https://emojicdn.elk.sh/🚤">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script data-goatcounter="https://infobaaten.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
     <div class="site-wrapper">
@@ -86,20 +88,15 @@
             </div>
 
             <div class="dashboard-footer">
-                <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <div class="footer-content">
                     <a href="https://www.facebook.com/infobaaten" target="_blank" rel="noopener noreferrer" class="facebook-btn">
                         <span>👍</span> Like på Facebook
                     </a>
-                    <div style="display: flex; align-items: center; gap: 6px; color: #5f6368; font-size: 13px;">
-                        <span>👁️ Besøkende:</span>
-                        <span id="visitorCount">0</span>
-                    </div>
                     <div class="footer-copyright">
                         © 2026 InfoBåten
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 
@@ -119,16 +116,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
-    <!-- Simple visitor counter - NO external images, just clean text -->
-    <script>
-        let count = localStorage.getItem('infobaaten_visitor');
-        if (count === null) {
-            count = 1;
-        } else {
-            count = parseInt(count) + 1;
-        }
-        localStorage.setItem('infobaaten_visitor', count);
-        document.getElementById('visitorCount').innerText = count;
-    </script>
 </body>
 </html>
