@@ -4,7 +4,7 @@ const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
                     'juli', 'august', 'september', 'oktober', 'november', 'desember'];
 
 let allRows = [];
-let chartInstance = null;
+let chartInstance = null;   
 let isMobile = false;
 
 // Detect mobile device
@@ -26,11 +26,25 @@ function getYear(dateStr) {
 function formatDateForChart(dateStr) {
     const parts = dateStr.split('-');
     if (parts.length !== 3) return dateStr;
-    // On mobile, show even shorter dates
     if (isMobile) {
         return `${parts[0]}/${parts[1]}`;
     }
     return `${parts[0]}.${parts[1]}`;
+}
+
+// NEW: Format timestamp for "Oppdatert" display with date and time
+function formatTimestamp(dateStr, timeStr) {
+    if (!dateStr || !timeStr) return "Oppdatert: --:--";
+    
+    const dateParts = dateStr.split('-');
+    if (dateParts.length !== 3) return `Oppdatert: ${timeStr.substring(0, 5)}`;
+    
+    const day = dateParts[0];
+    const month = dateParts[1];
+    const year = dateParts[2].slice(-2); // Get last two digits (2026 → 26)
+    const time = timeStr.substring(0, 5); // HH:MM
+    
+    return `Oppdatert: ${day}.${month}.${year} - ${time}`;
 }
 
 // Calculate linear regression trend line
@@ -51,7 +65,6 @@ function calculateTrendLine(data) {
     return data.map((_, i) => slope * i + intercept);
 }
 
-// Calculate average
 function calculateAverage(data) {
     const sum = data.reduce((a, b) => a + b, 0);
     return sum / data.length;
@@ -176,9 +189,18 @@ function updateLatestCard() {
         }
     }
     
+    // UPDATED: Use formatTimestamp to show date + time
     const latestUpdatedElem = document.getElementById('latestUpdated');
-    if (latestUpdatedElem && latest.Timestamp) {
-        latestUpdatedElem.textContent = `Oppdatert: ${latest.Timestamp}`;
+    if (latestUpdatedElem) {
+        const date = latest.Date;
+        const time = latest.Timestamp;
+        if (date && time) {
+            latestUpdatedElem.textContent = formatTimestamp(date, time);
+        } else if (time) {
+            latestUpdatedElem.textContent = `Oppdatert: ${time.substring(0, 5)}`;
+        } else {
+            latestUpdatedElem.textContent = `Oppdatert: --:--`;
+        }
     }
 }
 
@@ -285,7 +307,6 @@ function exportToCSV() {
     showToast(`✓ Eksportert ${exportRows.length} rader`);
 }
 
-// MOBILE-OPTIMIZED GRAPH
 function showGraph() {
     const selectedYear = document.getElementById('yearSelect').value;
     
@@ -301,10 +322,8 @@ function showGraph() {
     
     checkMobile();
     
-    // On mobile, show fewer data points for better readability
     let displayRows = graphRows;
     if (isMobile && graphRows.length > 15) {
-        // Take every 2nd data point on mobile
         displayRows = graphRows.filter((_, index) => index % 2 === 0);
         if (displayRows.length < 10) displayRows = graphRows.slice(0, 15);
     }
@@ -314,7 +333,6 @@ function showGraph() {
     const changeData = [];
     const backgroundColors = [];
     
-    // Reverse to show oldest to newest (left to right)
     [...displayRows].reverse().forEach(row => {
         labels.push(formatDateForChart(row.Date));
         const changeCm = row["Change cm/m"];
@@ -329,7 +347,6 @@ function showGraph() {
         }
     });
     
-    // Calculate trend line and average only if we have enough data
     let trendLineData = changeData;
     let averageValue = 0;
     if (changeData.length >= 3) {
@@ -343,7 +360,6 @@ function showGraph() {
     
     const ctx = document.getElementById('graphCanvas').getContext('2d');
     
-    // Mobile-optimized chart options
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: true,
@@ -358,7 +374,6 @@ function showGraph() {
                         if (value < 0) return `Fall: ${value} cm`;
                         return `Ingen endring: 0 cm`;
                     },
-                    // On mobile, show smaller tooltips
                     bodyFont: { size: isMobile ? 10 : 12 },
                     titleFont: { size: isMobile ? 10 : 12 }
                 }
@@ -382,8 +397,7 @@ function showGraph() {
                 },
                 grid: { color: '#e0e5eb' },
                 ticks: { 
-                    font: { size: isMobile ? 9 : 11 },
-                    stepSize: isMobile ? undefined : undefined
+                    font: { size: isMobile ? 9 : 11 }
                 }
             },
             x: {
@@ -415,7 +429,6 @@ function showGraph() {
         }
     ];
     
-    // Add trend line only if we have enough data
     if (changeData.length >= 3 && trendLineData !== changeData) {
         datasets.push({
             label: 'Trendlinje',
@@ -432,7 +445,6 @@ function showGraph() {
         });
     }
     
-    // Add average line only if we have data
     if (changeData.length > 0) {
         datasets.push({
             label: `Gj.snitt (${averageValue.toFixed(1)} cm)`,
