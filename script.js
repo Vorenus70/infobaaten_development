@@ -32,7 +32,6 @@ function formatDateForChart(dateStr) {
     return `${parts[0]}.${parts[1]}`;
 }
 
-// NEW: Format timestamp for "Oppdatert" display with date and time
 function formatTimestamp(dateStr, timeStr) {
     if (!dateStr || !timeStr) return "Oppdatert: --:--";
     
@@ -41,13 +40,12 @@ function formatTimestamp(dateStr, timeStr) {
     
     const day = dateParts[0];
     const month = dateParts[1];
-    const year = dateParts[2].slice(-2); // Get last two digits (2026 → 26)
-    const time = timeStr.substring(0, 5); // HH:MM
+    const year = dateParts[2].slice(-2);
+    const time = timeStr.substring(0, 5);
     
     return `Oppdatert: ${day}.${month}.${year} - ${time}`;
 }
 
-// Calculate linear regression trend line
 function calculateTrendLine(data) {
     const n = data.length;
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
@@ -153,44 +151,79 @@ function populateYearOptions() {
 }
 
 function updateLatestCard() {
-    if (allRows.length === 0) return;
+    const latestValueElem = document.getElementById('latestValue');
+    const latestUpdatedElem = document.getElementById('latestUpdated');
+    const latestChangeElem = document.getElementById('latestChange');
+    const changeArrow = document.querySelector('.change-arrow');
+    const changeValue = document.querySelector('.change-value');
+    
+    // No data available at all
+    if (allRows.length === 0) {
+        if (latestValueElem) {
+            latestValueElem.textContent = "Ingen data";
+            latestValueElem.classList.add('no-data');
+        }
+        if (latestUpdatedElem) latestUpdatedElem.textContent = "Ikke tilgjengelig";
+        if (latestChangeElem) {
+            if (changeArrow) changeArrow.textContent = '⏳';
+            if (changeValue) changeValue.textContent = 'Venter på data';
+            latestChangeElem.className = 'latest-change neutral';
+        }
+        return;
+    }
     
     const latest = allRows[0];
     const waterLevel = latest["Water Level (moh)"];
     const changeCm = latest["Change cm/m"];
     
-    const latestValueElem = document.getElementById('latestValue');
-    if (latestValueElem && waterLevel) {
-        latestValueElem.textContent = waterLevel;
-    }
+    // Check if water level is valid (number, not "Ikke tilgjengelig")
+    const isValidWaterLevel = waterLevel && 
+                              waterLevel !== "Ikke tilgjengelig" && 
+                              waterLevel !== "" &&
+                              !isNaN(parseFloat(waterLevel));
     
-    const latestChangeElem = document.getElementById('latestChange');
-    const changeArrow = document.querySelector('.change-arrow');
-    const changeValue = document.querySelector('.change-value');
-    
-    if (latestChangeElem && changeCm) {
-        let changeNum = parseFloat(changeCm);
-        let changeText = changeCm.toString().replace('cm', '').trim();
+    if (isValidWaterLevel) {
+        // Valid water level – show normally
+        if (latestValueElem) {
+            latestValueElem.textContent = waterLevel;
+            latestValueElem.classList.remove('no-data');
+        }
         
-        if (!isNaN(changeNum)) {
-            if (changeNum > 0) {
-                changeArrow.textContent = '▲';
-                changeValue.textContent = `+${changeText} cm`;
-                latestChangeElem.className = 'latest-change positive';
-            } else if (changeNum < 0) {
-                changeArrow.textContent = '▼';
-                changeValue.textContent = `${changeText} cm`;
-                latestChangeElem.className = 'latest-change negative';
-            } else {
-                changeArrow.textContent = '●';
-                changeValue.textContent = `${changeText} cm`;
-                latestChangeElem.className = 'latest-change neutral';
+        // Show change indicator
+        if (latestChangeElem && changeCm) {
+            let changeNum = parseFloat(changeCm);
+            let changeText = changeCm.toString().replace('cm', '').trim();
+            
+            if (!isNaN(changeNum)) {
+                if (changeNum > 0) {
+                    if (changeArrow) changeArrow.textContent = '▲';
+                    if (changeValue) changeValue.textContent = `+${changeText} cm`;
+                    latestChangeElem.className = 'latest-change positive';
+                } else if (changeNum < 0) {
+                    if (changeArrow) changeArrow.textContent = '▼';
+                    if (changeValue) changeValue.textContent = `${changeText} cm`;
+                    latestChangeElem.className = 'latest-change negative';
+                } else {
+                    if (changeArrow) changeArrow.textContent = '●';
+                    if (changeValue) changeValue.textContent = `${changeText} cm`;
+                    latestChangeElem.className = 'latest-change neutral';
+                }
             }
+        }
+    } else {
+        // No valid water level – show "Ingen data" with no-data class
+        if (latestValueElem) {
+            latestValueElem.textContent = "Ingen data";
+            latestValueElem.classList.add('no-data');
+        }
+        if (latestChangeElem) {
+            if (changeArrow) changeArrow.textContent = '⏳';
+            if (changeValue) changeValue.textContent = 'Venter på data';
+            latestChangeElem.className = 'latest-change neutral';
         }
     }
     
-    // UPDATED: Use formatTimestamp to show date + time
-    const latestUpdatedElem = document.getElementById('latestUpdated');
+    // Update timestamp
     if (latestUpdatedElem) {
         const date = latest.Date;
         const time = latest.Timestamp;
