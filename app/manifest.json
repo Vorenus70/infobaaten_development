@@ -1,13 +1,12 @@
-
 {
   "name": "InfoBåten Vannstand",
   "short_name": "InfoBåten",
-  "id": "/infobaaten_development/",
+  "id": "/infobaaten_development/app/",
   "description": "Vannstandhistorikk for Osensjøen – sanntidsoppdateringer",
-  "start_url": "/infobaaten_development/",
+  "start_url": "/infobaaten_development/app/",
   "display": "standalone",
-  "theme_color": "0b5e7e",
-  "background_color": "0b5e7e",
+  "theme_color": "#0b5e7e",
+  "background_color": "#eef7ff",
   "orientation": "portrait",
   "screenshots": [
     {
@@ -40,13 +39,13 @@
       "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
