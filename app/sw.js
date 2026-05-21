@@ -1,9 +1,9 @@
-const CACHE_NAME = 'infobaaten-dev-v2';
+const CACHE_NAME = 'infobaaten-dev-v3';
 const urlsToCache = [
-  '/infobaaten_development/',
-  '/infobaaten_development/index.html',
-  '/infobaaten_development/style.css',
-  '/infobaaten_development/script.js',
+  '/infobaaten_development/app/',
+  '/infobaaten_development/app/index.html',
+  '/infobaaten_development/app/style.css',
+  '/infobaaten_development/app/script.js',
   'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js',
   'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'
 ];
@@ -20,8 +20,8 @@ self.addEventListener('install', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // For HTML – always try network first, fallback to cache
-  if (url.pathname === '/infobaaten_development/' || url.pathname === '/infobaaten_development/index.html') {
+  // For HTML pages in /app/ – always try network first, fallback to cache
+  if (url.pathname === '/infobaaten_development/app/' || url.pathname === '/infobaaten_development/app/index.html') {
     event.respondWith(
       fetch(event.request)
         .catch(() => caches.match(event.request))
@@ -42,6 +42,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(name => {
           if (name !== CACHE_NAME) {
+            console.log('Deleting old cache:', name);
             return caches.delete(name);
           }
         })
