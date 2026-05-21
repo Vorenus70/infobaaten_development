@@ -8,6 +8,7 @@
     <meta name="author" content="InfoBåten">
     <link rel="icon" type="image/png" href="https://emojicdn.elk.sh/🚤">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script data-goatcounter="https://infobaaten.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
@@ -116,5 +117,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
+    
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/infobaaten_development/app/sw.js')
+                .then(reg => console.log('✅ Service Worker registered:', reg))
+                .catch(err => console.log('❌ Service Worker error:', err));
+        });
+    }
+    </script>
 </body>
 </html>
