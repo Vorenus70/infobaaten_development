@@ -1,4 +1,3 @@
-
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMyb0TYfW0pFQukBpPFODUy3U2S2CuhjGwD4Ix4vZYfnYOVldsEXjIPrYTUk3oJtBkcgWzxYB-YVpf/pub?gid=0&single=true&output=csv';
 
 const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 
@@ -8,7 +7,6 @@ let allRows = [];
 let chartInstance = null;   
 let isMobile = false;
 
-// Detect mobile device
 function checkMobile() {
     isMobile = window.innerWidth <= 768;
 }
@@ -158,7 +156,6 @@ function updateLatestCard() {
     const changeArrow = document.querySelector('.change-arrow');
     const changeValue = document.querySelector('.change-value');
     
-    // No data available at all
     if (allRows.length === 0) {
         if (latestValueElem) {
             latestValueElem.textContent = "Ingen data";
@@ -173,24 +170,22 @@ function updateLatestCard() {
         return;
     }
     
+    if (latestValueElem) {
+        latestValueElem.classList.remove('no-data');
+    }
+    
     const latest = allRows[0];
     const waterLevel = latest["Water Level (moh)"];
     const changeCm = latest["Change cm/m"];
     
-    // Check if water level is valid (number, not "Ikke tilgjengelig")
     const isValidWaterLevel = waterLevel && 
                               waterLevel !== "Ikke tilgjengelig" && 
                               waterLevel !== "" &&
                               !isNaN(parseFloat(waterLevel));
     
     if (isValidWaterLevel) {
-        // Valid water level – show normally
-        if (latestValueElem) {
-            latestValueElem.textContent = waterLevel;
-            latestValueElem.classList.remove('no-data');
-        }
+        if (latestValueElem) latestValueElem.textContent = waterLevel;
         
-        // Show change indicator
         if (latestChangeElem && changeCm) {
             let changeNum = parseFloat(changeCm);
             let changeText = changeCm.toString().replace('cm', '').trim();
@@ -212,7 +207,6 @@ function updateLatestCard() {
             }
         }
     } else {
-        // No valid water level – show "Ingen data" with no-data class
         if (latestValueElem) {
             latestValueElem.textContent = "Ingen data";
             latestValueElem.classList.add('no-data');
@@ -224,7 +218,6 @@ function updateLatestCard() {
         }
     }
     
-    // Update timestamp
     if (latestUpdatedElem) {
         const date = latest.Date;
         const time = latest.Timestamp;
@@ -353,194 +346,3 @@ function showGraph() {
         showToast('❌ Ingen data å vise graf for', true);
         return;
     }
-    
-    checkMobile();
-    
-    let displayRows = graphRows;
-    if (isMobile && graphRows.length > 15) {
-        displayRows = graphRows.filter((_, index) => index % 2 === 0);
-        if (displayRows.length < 10) displayRows = graphRows.slice(0, 15);
-    }
-    displayRows = displayRows.slice(0, isMobile ? 20 : 30);
-    
-    const labels = [];
-    const changeData = [];
-    const backgroundColors = [];
-    
-    [...displayRows].reverse().forEach(row => {
-        labels.push(formatDateForChart(row.Date));
-        const changeCm = row["Change cm/m"];
-        let changeNum = parseFloat(changeCm);
-        
-        if (isNaN(changeNum)) {
-            changeData.push(0);
-            backgroundColors.push('#9aa0a6');
-        } else {
-            changeData.push(changeNum);
-            backgroundColors.push(changeNum > 0 ? '#0d652d' : (changeNum < 0 ? '#c5221f' : '#9aa0a6'));
-        }
-    });
-    
-    let trendLineData = changeData;
-    let averageValue = 0;
-    if (changeData.length >= 3) {
-        trendLineData = calculateTrendLine(changeData);
-        averageValue = calculateAverage(changeData);
-    }
-    
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
-    
-    const ctx = document.getElementById('graphCanvas').getContext('2d');
-    
-    const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        if (context.dataset.label === 'Trendlinje') return null;
-                        if (context.dataset.label && context.dataset.label.includes('Gjennomsnitt')) return null;
-                        let value = context.raw;
-                        if (value > 0) return `Stigning: +${value} cm`;
-                        if (value < 0) return `Fall: ${value} cm`;
-                        return `Ingen endring: 0 cm`;
-                    },
-                    bodyFont: { size: isMobile ? 10 : 12 },
-                    titleFont: { size: isMobile ? 10 : 12 }
-                }
-            },
-            legend: {
-                position: isMobile ? 'bottom' : 'top',
-                labels: {
-                    boxWidth: isMobile ? 8 : 12,
-                    font: { size: isMobile ? 9 : 12 },
-                    usePointStyle: true,
-                    pointStyle: 'rect'
-                }
-            }
-        },
-        scales: {
-            y: {
-                title: { 
-                    display: !isMobile, 
-                    text: 'Endring (cm)', 
-                    color: '#5f6368' 
-                },
-                grid: { color: '#e0e5eb' },
-                ticks: { 
-                    font: { size: isMobile ? 9 : 11 }
-                }
-            },
-            x: {
-                title: { 
-                    display: !isMobile, 
-                    text: 'Dato', 
-                    color: '#5f6368' 
-                },
-                ticks: { 
-                    maxRotation: isMobile ? 45 : 45, 
-                    minRotation: isMobile ? 45 : 45,
-                    font: { size: isMobile ? 8 : 11 },
-                    autoSkip: true,
-                    maxTicksLimit: isMobile ? 8 : 15
-                }
-            }
-        }
-    };
-    
-    const datasets = [
-        {
-            label: 'Endring (cm)',
-            data: changeData,
-            backgroundColor: backgroundColors,
-            borderRadius: 4,
-            borderSkipped: false,
-            barPercentage: isMobile ? 0.5 : 0.4,
-            categoryPercentage: isMobile ? 0.7 : 0.8
-        }
-    ];
-    
-    if (changeData.length >= 3 && trendLineData !== changeData) {
-        datasets.push({
-            label: 'Trendlinje',
-            data: trendLineData,
-            type: 'line',
-            borderColor: '#1a73e8',
-            backgroundColor: 'transparent',
-            borderWidth: isMobile ? 1.5 : 2,
-            borderDash: [5, 5],
-            pointRadius: 0,
-            fill: false,
-            tension: 0,
-            order: 1
-        });
-    }
-    
-    if (changeData.length > 0) {
-        datasets.push({
-            label: `Gj.snitt (${averageValue.toFixed(1)} cm)`,
-            data: Array(changeData.length).fill(averageValue),
-            type: 'line',
-            borderColor: '#ea4335',
-            backgroundColor: 'transparent',
-            borderWidth: isMobile ? 1.5 : 2,
-            borderDash: [],
-            pointRadius: 0,
-            fill: false,
-            tension: 0,
-            order: 0
-        });
-    }
-    
-    chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: { labels: labels, datasets: datasets },
-        options: chartOptions
-    });
-    
-    document.getElementById('graphModal').style.display = 'block';
-}
-
-function closeModal() {
-    document.getElementById('graphModal').style.display = 'none';
-}
-
-function init() {
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    Papa.parse(CSV_URL, {
-        download: true,
-        header: true,
-        dynamicTyping: true,
-        complete: function(results) {
-            allRows = results.data.filter(row => row.Date && row["Water Level (moh)"]);
-            allRows.sort((a, b) => {
-                const dateA = getDateObject(a.Date);
-                const dateB = getDateObject(b.Date);
-                return dateB - dateA;
-            });
-            
-            populateYearOptions();
-            updateLatestCard();
-            
-            document.getElementById('yearSelect').addEventListener('change', function() {
-                renderTable(this.value);
-            });
-            
-            document.getElementById('refreshBtn').onclick = function(e) { e.preventDefault(); refreshData(); };
-            document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
-            document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
-            
-            document.querySelector('.modal-close').onclick = closeModal;
-            window.onclick = function(event) {
-                if (event.target === document.getElementById('graphModal')) closeModal();
-            };
-        }
-    });
-}
-
-init();
