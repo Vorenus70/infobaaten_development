@@ -11,24 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script data-goatcounter="https://infobaaten.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
-    
-    <!-- PWA Configuration -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0b5e7e">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="InfoBåten">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
-
-    <!-- Service Worker Registration -->
-    <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/infobaaten_development/sw.js')
-                .then(reg => console.log('✅ Service Worker registered:', reg))
-                .catch(err => console.log('❌ Service Worker error:', err));
-        });
-    }
-    </script>
 </head>
 <body>
     <div class="site-wrapper">
@@ -106,13 +88,10 @@
             </div>
 
             <div class="dashboard-footer">
-                <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                <div class="footer-content">
                     <a href="https://www.facebook.com/infobaaten" target="_blank" rel="noopener noreferrer" class="facebook-btn">
                         <span>👍</span> Like på Facebook
                     </a>
-                    <div class="app-version" style="font-size: 11px; color: #5f6368;">
-                        v<span id="versionNumber">---</span>
-                    </div>
                     <div class="footer-copyright">
                         © 2026 InfoBåten
                     </div>
@@ -137,43 +116,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
-    
-    <!-- Version check with auto-refresh on focus -->
-    <script>
-    // ⚠️ UPDATE THIS VERSION NUMBER WHEN YOU RELEASE A NEW VERSION ⚠️
-    const APP_VERSION = "1.0.2";
-    
-    // Display version in footer
-    const versionSpan = document.getElementById('versionNumber');
-    if (versionSpan) {
-        versionSpan.innerText = APP_VERSION;
-    }
-    
-    // Check version and refresh if needed
-    function checkAndRefresh() {
-        fetch('/infobaaten_development/version.json?t=' + Date.now())
-            .then(r => r.json())
-            .then(data => {
-                console.log("📱 App version:", APP_VERSION);
-                console.log("🌐 Server version:", data.version);
-                if (data.version && data.version !== APP_VERSION) {
-                    console.log("🔄 New version available! Refreshing...");
-                    location.reload();
-                }
-            })
-            .catch(err => console.log("Version check failed:", err));
-    }
-    
-    // Check on every app load
-    checkAndRefresh();
-    
-    // Check every time app comes to foreground
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            console.log("App came to foreground – checking for updates");
-            checkAndRefresh();
-        }
-    });
-    </script>
 </body>
 </html>
