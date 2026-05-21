@@ -41,12 +41,37 @@ body {
     pointer-events: none;
 }
 
+.particles::before,
+.particles::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    animation: float 20s infinite linear;
+}
+
+.particles::before {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.particles::after {
+    top: 70%;
+    left: 85%;
+    animation-delay: 5s;
+}
+
 @keyframes float {
     0% { transform: translateY(0) translateX(0); opacity: 0; }
     10% { opacity: 1; }
     90% { opacity: 1; }
     100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
 }
+
+/* Additional particles via JS will be added */
 
 /* ========== HERO SECTION ========== */
 .hero {
