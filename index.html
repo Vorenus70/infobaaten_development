@@ -24,10 +24,14 @@
         <div class="hero-content">
             <h1 class="hero-title">INFOBÅTEN</h1>
             <p class="hero-subtitle">Vannstand for norske innsjøer</p>
-<a href="/infobaaten_development/app/" class="cta-button">
-                
-                <span>📱</span> Instaler appen
+            
+            <!-- Dynamic button – changes based on device -->
+            <a href="/infobaaten_development/app/" id="mainCta" class="cta-button">
+                <span id="ctaIcon">📱</span> <span id="ctaText">Instaler appen</span>
             </a>
+            <p id="ctaNote" class="cta-note">
+                📱 Fungerer kun på mobil og nettbrett
+            </p>
         </div>
         
         <!-- Floating mockup -->
@@ -122,6 +126,29 @@
         </div>
     </footer>
 
+    <script>
+        // Device detection – runs after page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detect mobile/tablet vs desktop
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet|PlayBook|Silk/i.test(navigator.userAgent) || 
+                             (window.innerWidth <= 1024);
+            
+            const ctaIcon = document.getElementById('ctaIcon');
+            const ctaText = document.getElementById('ctaText');
+            const ctaNote = document.getElementById('ctaNote');
+            
+            if (!isMobile) {
+                // Desktop user – change button to web version
+                if (ctaIcon) ctaIcon.textContent = '🖥️';
+                if (ctaText) ctaText.textContent = 'Gå til nettversjon';
+                if (ctaNote) {
+                    ctaNote.textContent = '💻 Åpnes i nettleseren – ingen installasjon nødvendig';
+                    ctaNote.style.opacity = '0.7';
+                }
+            }
+        });
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
