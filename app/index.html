@@ -25,13 +25,17 @@
             <h1 class="hero-title">INFOBÅTEN</h1>
             <p class="hero-subtitle">Vannstand for norske innsjøer</p>
             
-            <!-- Dynamic button – changes based on device -->
-            <a href="/infobaaten_development/app/" id="mainCta" class="cta-button">
-                <span id="ctaIcon">📱</span> <span id="ctaText">Instaler appen</span>
-            </a>
-            <p id="ctaNote" class="cta-note">
-                📱 Fungerer kun på mobil og nettbrett
-            </p>
+            <div id="installSection">
+                <a href="/infobaaten_development/app/" id="installButton" class="cta-button">
+                    <span>📱</span> Instaler appen
+                </a>
+                <p id="mobileNote" style="font-size: 12px; opacity: 0.7; margin-top: 12px;">
+                    📱 Fungerer kun på mobil og nettbrett
+                </p>
+                <p id="desktopLink" style="font-size: 12px; margin-top: 8px;">
+                    🖥️ <a href="/infobaaten_development/app/" style="color: white; opacity: 0.8;">Desktop-versjon (åpnes i nettleser)</a>
+                </p>
+            </div>
         </div>
         
         <!-- Floating mockup -->
@@ -127,26 +131,34 @@
     </footer>
 
     <script>
-        // Device detection – runs after page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Detect mobile/tablet vs desktop
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet|PlayBook|Silk/i.test(navigator.userAgent) || 
-                             (window.innerWidth <= 1024);
+        // Detect if user is on mobile or tablet
+        function isMobileOrTablet() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet|PlayBook|Silk/i.test(navigator.userAgent) || 
+                   (window.innerWidth <= 1024 && window.innerHeight <= 768);
+        }
+        
+        // If on desktop, change the button behavior
+        if (!isMobileOrTablet()) {
+            const installButton = document.getElementById('installButton');
+            const mobileNote = document.getElementById('mobileNote');
+            const desktopLink = document.getElementById('desktopLink');
             
-            const ctaIcon = document.getElementById('ctaIcon');
-            const ctaText = document.getElementById('ctaText');
-            const ctaNote = document.getElementById('ctaNote');
+            // Change button to regular link (no PWA expectation)
+            installButton.href = '/infobaaten_development/app/';
+            installButton.innerHTML = '<span>🖥️</span> Åpne nettversjon';
             
-            if (!isMobile) {
-                // Desktop user – change button to web version
-                if (ctaIcon) ctaIcon.textContent = '🖥️';
-                if (ctaText) ctaText.textContent = 'Gå til nettversjon';
-                if (ctaNote) {
-                    ctaNote.textContent = '💻 Åpnes i nettleseren – ingen installasjon nødvendig';
-                    ctaNote.style.opacity = '0.7';
-                }
-            }
-        });
+            // Hide the "fungerer kun på mobil" note
+            if (mobileNote) mobileNote.style.display = 'none';
+            
+            // Hide the desktop link (since it's redundant now)
+            if (desktopLink) desktopLink.style.display = 'none';
+            
+            // Add a desktop-specific note
+            const desktopNote = document.createElement('p');
+            desktopNote.style.cssText = 'font-size: 12px; opacity: 0.7; margin-top: 12px;';
+            desktopNote.innerHTML = '💻 Åpnes i nettleseren – ingen installasjon nødvendig';
+            installButton.parentNode.insertBefore(desktopNote, mobileNote);
+        }
     </script>
     
     <script src="script.js"></script>
