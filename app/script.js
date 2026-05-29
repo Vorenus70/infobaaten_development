@@ -5,7 +5,7 @@ const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
                     'juli', 'august', 'september', 'oktober', 'november', 'desember'];
 
 // App version – INCREMENT THIS FOR EACH RELEASE
-const APP_VERSION = '2.0.1';
+const APP_VERSION = '2.0.0';
 
 // Supabase configuration
 const SUPABASE_URL = 'https://pcvfwioshtxuctjcgkrr.supabase.co';
@@ -14,15 +14,15 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // VAPID public key
 const VAPID_PUBLIC_KEY = 'BNgytdpeUT9Cn30LwXrM5QwqbLmJjVprH1vf6coVCYRgfWUJQ8SnLa2m6xsmdSuHuGzHSR47-1CRhlj0hkGy-qw';
 
-// Supabase client (lazy init)
-let supabase = null;
+// Supabase client (using different name to avoid conflict)
+let supabaseClient = null;
 
 function initSupabase() {
-    if (!supabase && window.supabase) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if (!supabaseClient && window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('✅ Supabase initialized');
     }
-    return supabase;
+    return supabaseClient;
 }
 
 let allRows = [];
@@ -63,12 +63,12 @@ async function subscribeToNotifications() {
             applicationServerKey: VAPID_PUBLIC_KEY
         });
         
-        const supabaseClient = initSupabase();
-        if (!supabaseClient) {
+        const supabase = initSupabase();
+        if (!supabase) {
             throw new Error('Supabase not loaded yet');
         }
         
-        const { error } = await supabaseClient
+        const { error } = await supabase
             .from('subscriptions')
             .insert([{
                 endpoint: subscription.endpoint,
