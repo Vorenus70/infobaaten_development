@@ -1,12 +1,39 @@
+// ========== CONSTANTS ==========
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMyb0TYfW0pFQukBpPFODUy3U2S2CuhjGwD4Ix4vZYfnYOVldsEXjIPrYTUk3oJtBkcgWzxYB-YVpf/pub?gid=0&single=true&output=csv';
 
 const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni', 
                     'juli', 'august', 'september', 'oktober', 'november', 'desember'];
 
+// App version – INCREMENT THIS FOR EACH RELEASE
+const APP_VERSION = '2.0.0';
+
 let allRows = [];
 let chartInstance = null;   
 let isMobile = false;
 
+// ========== VERSION CHECK & MIGRATION ==========
+function checkAppVersion() {
+    const storedVersion = localStorage.getItem('infobaaten_app_version');
+    
+    if (storedVersion !== APP_VERSION) {
+        console.log(`Version update: ${storedVersion} → ${APP_VERSION}`);
+        
+        // Clear old localStorage settings that might cause issues
+        localStorage.removeItem('toolsSectionOpen');
+        // Add any other localStorage keys here as needed
+        
+        // Store the new version
+        localStorage.setItem('infobaaten_app_version', APP_VERSION);
+        
+        // Optional: Show a "What's new" message
+        // showToast('✨ Ny versjon! Noen innstillinger er oppdatert.');
+        
+        return true; // Version changed
+    }
+    return false; // Version unchanged
+}
+
+// ========== CORE FUNCTIONS ==========
 function checkMobile() {
     isMobile = window.innerWidth <= 768;
 }
@@ -501,7 +528,67 @@ function closeModal() {
     document.getElementById('graphModal').style.display = 'none';
 }
 
+// ========== NYTTIGE VERKTØY - CONVERTERS ==========
+function initConverters() {
+    // Ensure DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initConverters);
+        return;
+    }
+    
+    const nauticalInput = document.getElementById('nauticalMiles');
+    const knotsInput = document.getElementById('knots');
+    const nauticalResult = document.getElementById('nauticalResult');
+    const knotsResult = document.getElementById('knotsResult');
+    
+    if (nauticalInput && nauticalResult) {
+        const updateNautical = function() {
+            const nm = parseFloat(nauticalInput.value) || 0;
+            const km = nm * 1.852;
+            nauticalResult.textContent = km.toFixed(3) + ' km';
+        };
+        nauticalInput.addEventListener('input', updateNautical);
+        nauticalInput.addEventListener('touchstart', function() {});
+        updateNautical();
+    }
+    
+    if (knotsInput && knotsResult) {
+        const updateKnots = function() {
+            const kn = parseFloat(knotsInput.value) || 0;
+            const kmh = kn * 1.852;
+            knotsResult.textContent = kmh.toFixed(3) + ' km/t';
+        };
+        knotsInput.addEventListener('input', updateKnots);
+        knotsInput.addEventListener('touchstart', function() {});
+        updateKnots();
+    }
+}
+
+function initToolsToggle() {
+    const toggleBtn = document.getElementById('toolsToggle');
+    const toolsSection = document.getElementById('toolsSection');
+    
+    if (toggleBtn && toolsSection) {
+        // Check localStorage for saved state – default to closed
+        const isOpen = localStorage.getItem('toolsSectionOpen') === 'true';
+        if (isOpen) {
+            toolsSection.classList.add('open');
+        } else {
+            toolsSection.classList.remove('open');
+        }
+        
+        toggleBtn.addEventListener('click', function() {
+            toolsSection.classList.toggle('open');
+            localStorage.setItem('toolsSectionOpen', toolsSection.classList.contains('open'));
+        });
+    }
+}
+
+// ========== INITIALIZATION ==========
 function init() {
+    // Check version and migrate settings if needed
+    checkAppVersion();
+    
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
@@ -542,50 +629,6 @@ function init() {
         }
     });
 }
-// ========== NYTTIGE VERKTØY - CONVERTERS ==========
-function initConverters() {
-    const nauticalInput = document.getElementById('nauticalMiles');
-    const knotsInput = document.getElementById('knots');
-    const nauticalResult = document.getElementById('nauticalResult');
-    const knotsResult = document.getElementById('knotsResult');
-    
-    if (nauticalInput && nauticalResult) {
-        const updateNautical = function() {
-            const nm = parseFloat(nauticalInput.value) || 0;
-            const km = nm * 1.852;
-            nauticalResult.textContent = km.toFixed(3) + ' km';
-        };
-        nauticalInput.addEventListener('input', updateNautical);
-        updateNautical(); // Initial calculation
-    }
-    
-    if (knotsInput && knotsResult) {
-        const updateKnots = function() {
-            const kn = parseFloat(knotsInput.value) || 0;
-            const kmh = kn * 1.852;
-            knotsResult.textContent = kmh.toFixed(3) + ' km/t';
-        };
-        knotsInput.addEventListener('input', updateKnots);
-        updateKnots(); // Initial calculation
-    }
-}
 
-function initToolsToggle() {
-    const toggleBtn = document.getElementById('toolsToggle');
-    const toolsSection = document.getElementById('toolsSection');
-    
-    if (toggleBtn && toolsSection) {
-        // Check localStorage for saved state
-        const isOpen = localStorage.getItem('toolsSectionOpen') === 'true';
-        if (isOpen) {
-            toolsSection.classList.add('open');
-        }
-        
-        toggleBtn.addEventListener('click', function() {
-            toolsSection.classList.toggle('open');
-            localStorage.setItem('toolsSectionOpen', toolsSection.classList.contains('open'));
-        });
-    }
-}
 // Start everything
 init();
