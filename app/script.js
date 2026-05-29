@@ -532,6 +532,8 @@ function init() {
             window.onclick = function(event) {
                 if (event.target === document.getElementById('graphModal')) closeModal();
             };
+            initConverters();
+            initToolsToggle();
         }
     });
 }
