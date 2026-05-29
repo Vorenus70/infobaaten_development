@@ -535,6 +535,50 @@ function init() {
         }
     });
 }
+// ========== NYTTIGE VERKTØY - CONVERTERS ==========
+function initConverters() {
+    const nauticalInput = document.getElementById('nauticalMiles');
+    const knotsInput = document.getElementById('knots');
+    const nauticalResult = document.getElementById('nauticalResult');
+    const knotsResult = document.getElementById('knotsResult');
+    
+    if (nauticalInput && nauticalResult) {
+        const updateNautical = function() {
+            const nm = parseFloat(nauticalInput.value) || 0;
+            const km = nm * 1.852;
+            nauticalResult.textContent = km.toFixed(3) + ' km';
+        };
+        nauticalInput.addEventListener('input', updateNautical);
+        updateNautical(); // Initial calculation
+    }
+    
+    if (knotsInput && knotsResult) {
+        const updateKnots = function() {
+            const kn = parseFloat(knotsInput.value) || 0;
+            const kmh = kn * 1.852;
+            knotsResult.textContent = kmh.toFixed(3) + ' km/t';
+        };
+        knotsInput.addEventListener('input', updateKnots);
+        updateKnots(); // Initial calculation
+    }
+}
 
+function initToolsToggle() {
+    const toggleBtn = document.getElementById('toolsToggle');
+    const toolsSection = document.getElementById('toolsSection');
+    
+    if (toggleBtn && toolsSection) {
+        // Check localStorage for saved state
+        const isOpen = localStorage.getItem('toolsSectionOpen') === 'true';
+        if (isOpen) {
+            toolsSection.classList.add('open');
+        }
+        
+        toggleBtn.addEventListener('click', function() {
+            toolsSection.classList.toggle('open');
+            localStorage.setItem('toolsSectionOpen', toolsSection.classList.contains('open'));
+        });
+    }
+}
 // Start everything
 init();
