@@ -510,18 +510,23 @@ function init() {
         header: true,
         dynamicTyping: true,
         complete: function(results) {
+            // Filter and sort data
             allRows = results.data.filter(row => row.Date && row["Water Level (moh)"]);
-           initConverters();
-            initToolsToggle();
             allRows.sort((a, b) => {
                 const dateA = getDateObject(a.Date);
                 const dateB = getDateObject(b.Date);
                 return dateB - dateA;
-              
             });
             
-          
+            // Populate UI
+            populateYearOptions();
+            updateLatestCard();
             
+            // Initialize converters and tools toggle
+            initConverters();
+            initToolsToggle();
+            
+            // Set up event listeners
             document.getElementById('yearSelect').addEventListener('change', function() {
                 renderTable(this.value);
             });
@@ -534,7 +539,6 @@ function init() {
             window.onclick = function(event) {
                 if (event.target === document.getElementById('graphModal')) closeModal();
             };
-           
         }
     });
 }
