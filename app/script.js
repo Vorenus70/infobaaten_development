@@ -18,6 +18,64 @@ let allRows = [];
 let chartInstance = null;   
 let isMobile = false;
 
+// ========== PUSH NOTIFICATIONS ==========
+let supabaseClient = null;
+
+function initSupabase() {
+    if (!supabaseClient && window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return supabaseClient;
+}
+
+async function subscribeToNotifications() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        showToast('⚠️ Push varsler støttes ikke i denne nettleseren', true);
+        return;
+    }
+    
+    try {
+        // Request permission
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            showToast('❌ Du må tillate varsler for å motta dem', true);
+            return;
+        }
+        
+        // Get service worker registration
+        const swReg = await navigator.serviceWorker.ready;
+        
+        // Subscribe to push
+        const subscription = await swReg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: VAPID_PUBLIC_KEY
+        });
+        
+        // Initialize Supabase
+        const supabase = initSupabase();
+        if (!supabase) {
+            throw new Error('Supabase not initialized');
+        }
+        
+        // Save subscription to Supabase
+        const { error } = await supabase
+            .from('subscriptions')
+            .insert([{
+                endpoint: subscription.endpoint,
+                keys: subscription.toJSON().keys,
+                user_agent: navigator.userAgent
+            }]);
+        
+        if (error) throw error;
+        
+        showToast('✅ Du vil nå motta varsler når vannstanden endres');
+        
+    } catch (err) {
+        console.error('Subscription failed:', err);
+        showToast('❌ Kunne ikke aktivere varsler', true);
+    }
+}
+
 // ========== VERSION CHECK & MIGRATION ==========
 function checkAppVersion() {
     const storedVersion = localStorage.getItem('infobaaten_app_version');
