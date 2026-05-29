@@ -655,6 +655,8 @@ function init() {
     checkAppVersion();
     
     checkMobile();
+      initSupabase();
+
     window.addEventListener('resize', checkMobile);
     
     Papa.parse(CSV_URL, {
