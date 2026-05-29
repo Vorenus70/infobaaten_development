@@ -12,7 +12,7 @@ const SUPABASE_URL = 'https://pcvfwioshtxuctjcgkrr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjdmZ3aW9zaHR4dWN0amNna3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNDE5NTgsImV4cCI6MjA5NDYxNzk1OH0.5OydO9ELHHwVWMp4gbSDSIXx-wAE4pB8F8H0ivDVXB4';
 
 // VAPID public key
-const VAPID_PUBLIC_KEY = 'BNgytdpeUT9Cn30LwXrM5QwqbLmJjVprH1vf6coVCYRgfWUJQ8SnLa2m6xsmdSuHuGzHSR47-1CRhlj0hkGy-qw';
+const VAPID_PUBLIC_KEY = 'BH4O1gp4MkNjuT-SnMa3rQ3n8kp67QHYvhpY0i94tSV-digb0FOptai4JGbvb4BiCvfTTDci0igHq0oFhBap_IA';
 
 // Supabase client (using different name to avoid conflict)
 let supabaseClient = null;
