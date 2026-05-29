@@ -14,8 +14,16 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // VAPID public key
 const VAPID_PUBLIC_KEY = 'BNgytdpeUT9Cn30LwXrM5QwqbLmJjVprH1vf6coVCYRgfWUJQ8SnLa2m6xsmdSuHuGzHSR47-1CRhlj0hkGy-qw';
 
-// Initialize Supabase client (global)
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Supabase client (lazy init)
+let supabase = null;
+
+function initSupabase() {
+    if (!supabase && window.supabase) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Supabase initialized');
+    }
+    return supabase;
+}
 
 let allRows = [];
 let chartInstance = null;   
@@ -27,13 +35,8 @@ function checkAppVersion() {
     
     if (storedVersion !== APP_VERSION) {
         console.log(`Version update: ${storedVersion} → ${APP_VERSION}`);
-        
-        // Clear old localStorage settings that might cause issues
         localStorage.removeItem('toolsSectionOpen');
-        
-        // Store the new version
         localStorage.setItem('infobaaten_app_version', APP_VERSION);
-        
         return true;
     }
     return false;
@@ -47,24 +50,25 @@ async function subscribeToNotifications() {
     }
     
     try {
-        // Request permission
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
             showToast('❌ Du må tillate varsler for å motta dem', true);
             return;
         }
         
-        // Get service worker registration
         const swReg = await navigator.serviceWorker.ready;
         
-        // Subscribe to push
         const subscription = await swReg.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: VAPID_PUBLIC_KEY
         });
         
-        // Save subscription to Supabase
-        const { error } = await supabase
+        const supabaseClient = initSupabase();
+        if (!supabaseClient) {
+            throw new Error('Supabase not loaded yet');
+        }
+        
+        const { error } = await supabaseClient
             .from('subscriptions')
             .insert([{
                 endpoint: subscription.endpoint,
@@ -633,15 +637,20 @@ function initToolsToggle() {
 
 // ========== INITIALIZATION ==========
 function init() {
+    console.log('init() started');
     checkAppVersion();
     checkMobile();
     window.addEventListener('resize', checkMobile);
+    
+    // Initialize Supabase (doesn't block data loading)
+    initSupabase();
     
     Papa.parse(CSV_URL, {
         download: true,
         header: true,
         dynamicTyping: true,
         complete: function(results) {
+            console.log('CSV loaded, rows:', results.data.length);
             allRows = results.data.filter(row => row.Date && row["Water Level (moh)"]);
             allRows.sort((a, b) => {
                 const dateA = getDateObject(a.Date);
@@ -675,6 +684,10 @@ function init() {
             window.onclick = function(event) {
                 if (event.target === document.getElementById('graphModal')) closeModal();
             };
+        },
+        error: function(err) {
+            console.error('CSV parse error:', err);
+            showToast('❌ Kunne ikke laste data', true);
         }
     });
 }
