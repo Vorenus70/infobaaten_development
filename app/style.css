@@ -612,3 +612,192 @@ body {
         padding: 32px 32px 26px 32px;
     }
 }
+
+/* ========== NYTTIGE VERKTØY - EXPANDABLE SECTION ========== */
+.tools-section {
+    margin: 16px 20px;
+    border: 1px solid #e0e5eb;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.tools-toggle {
+    width: 100%;
+    padding: 14px 18px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0b5e7e;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s ease;
+}
+
+.tools-toggle:hover {
+    background-color: #eef2f7;
+}
+
+.toggle-icon {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+    font-size: 12px;
+}
+
+.tools-section.open .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.tools-content {
+    display: none;
+    padding: 20px;
+    border-top: 1px solid #e0e5eb;
+    background-color: white;
+}
+
+.tools-section.open .tools-content {
+    display: block;
+}
+
+.converter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.converter {
+    flex: 1;
+    min-width: 240px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    background: #f8f9fa;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e0e5eb;
+}
+
+.converter-icon {
+    font-size: 28px;
+}
+
+.converter-info {
+    flex: 2;
+    min-width: 100px;
+}
+
+.converter-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0b5e7e;
+    margin: 0 0 4px 0;
+}
+
+.converter-info p {
+    font-size: 11px;
+    color: #5f6368;
+    margin: 0;
+}
+
+.converter-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.converter-input input {
+    width: 80px;
+    padding: 8px 10px;
+    border: 1px solid #cde4f0;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    background: white;
+}
+
+.converter-input input:focus {
+    outline: none;
+    border-color: #0b5e7e;
+    box-shadow: 0 0 0 2px rgba(11,94,126,0.1);
+}
+
+.converter-equals {
+    font-size: 14px;
+    color: #5f6368;
+    font-weight: 500;
+}
+
+.converter-result {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0b5e7e;
+    background: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #cde4f0;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Mobile styles for tools section */
+@media (max-width: 768px) {
+    .tools-section {
+        margin: 12px;
+    }
+    
+    .tools-toggle {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+    
+    .tools-content {
+        padding: 12px;
+    }
+    
+    .converter-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .converter {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .converter-info {
+        flex: 1;
+        min-width: auto;
+    }
+    
+    .converter-icon {
+        font-size: 24px;
+    }
+    
+    .converter-info h4 {
+        font-size: 13px;
+    }
+    
+    .converter-info p {
+        font-size: 10px;
+    }
+    
+    .converter-input input {
+        width: 70px;
+        padding: 6px 8px;
+        font-size: 13px;
+    }
+    
+    .converter-result {
+        font-size: 13px;
+        padding: 4px 10px;
+        min-width: 70px;
+    }
+}
