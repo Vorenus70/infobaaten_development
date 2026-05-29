@@ -7,27 +7,39 @@ const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
 // App version – INCREMENT THIS FOR EACH RELEASE
 const APP_VERSION = '2.0.0';
 
-// Initialize Supabase client (add at top of file)
-const supabaseUrl = 'https://pcvfwioshtxuctjcgkrr.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjdmZ3aW9zaHR4dWN0amNna3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNDE5NTgsImV4cCI6MjA5NDYxNzk1OH0.5OydO9ELHHwVWMp4gbSDSIXx-wAE4pB8F8H0ivDVXB4';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-// VAPID public key (from step 1)
+// Supabase configuration
+const SUPABASE_URL = 'https://pcvfwioshtxuctjcgkrr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjdmZ3aW9zaHR4dWN0amNna3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNDE5NTgsImV4cCI6MjA5NDYxNzk1OH0.5OydO9ELHHwVWMp4gbSDSIXx-wAE4pB8F8H0ivDVXB4';
+
+// VAPID public key
 const VAPID_PUBLIC_KEY = 'BNgytdpeUT9Cn30LwXrM5QwqbLmJjVprH1vf6coVCYRgfWUJQ8SnLa2m6xsmdSuHuGzHSR47-1CRhlj0hkGy-qw';
+
+// Initialize Supabase client (global)
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let allRows = [];
 let chartInstance = null;   
 let isMobile = false;
 
-// ========== PUSH NOTIFICATIONS ==========
-let supabaseClient = null;
-
-function initSupabase() {
-    if (!supabaseClient && window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ========== VERSION CHECK & MIGRATION ==========
+function checkAppVersion() {
+    const storedVersion = localStorage.getItem('infobaaten_app_version');
+    
+    if (storedVersion !== APP_VERSION) {
+        console.log(`Version update: ${storedVersion} → ${APP_VERSION}`);
+        
+        // Clear old localStorage settings that might cause issues
+        localStorage.removeItem('toolsSectionOpen');
+        
+        // Store the new version
+        localStorage.setItem('infobaaten_app_version', APP_VERSION);
+        
+        return true;
     }
-    return supabaseClient;
+    return false;
 }
 
+// ========== PUSH NOTIFICATIONS ==========
 async function subscribeToNotifications() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
         showToast('⚠️ Push varsler støttes ikke i denne nettleseren', true);
@@ -51,12 +63,6 @@ async function subscribeToNotifications() {
             applicationServerKey: VAPID_PUBLIC_KEY
         });
         
-        // Initialize Supabase
-        const supabase = initSupabase();
-        if (!supabase) {
-            throw new Error('Supabase not initialized');
-        }
-        
         // Save subscription to Supabase
         const { error } = await supabase
             .from('subscriptions')
@@ -74,28 +80,6 @@ async function subscribeToNotifications() {
         console.error('Subscription failed:', err);
         showToast('❌ Kunne ikke aktivere varsler', true);
     }
-}
-
-// ========== VERSION CHECK & MIGRATION ==========
-function checkAppVersion() {
-    const storedVersion = localStorage.getItem('infobaaten_app_version');
-    
-    if (storedVersion !== APP_VERSION) {
-        console.log(`Version update: ${storedVersion} → ${APP_VERSION}`);
-        
-        // Clear old localStorage settings that might cause issues
-        localStorage.removeItem('toolsSectionOpen');
-        // Add any other localStorage keys here as needed
-        
-        // Store the new version
-        localStorage.setItem('infobaaten_app_version', APP_VERSION);
-        
-        // Optional: Show a "What's new" message
-        // showToast('✨ Ny versjon! Noen innstillinger er oppdatert.');
-        
-        return true; // Version changed
-    }
-    return false; // Version unchanged
 }
 
 // ========== CORE FUNCTIONS ==========
@@ -595,7 +579,6 @@ function closeModal() {
 
 // ========== NYTTIGE VERKTØY - CONVERTERS ==========
 function initConverters() {
-    // Ensure DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initConverters);
         return;
@@ -634,7 +617,6 @@ function initToolsToggle() {
     const toolsSection = document.getElementById('toolsSection');
     
     if (toggleBtn && toolsSection) {
-        // Check localStorage for saved state – default to closed
         const isOpen = localStorage.getItem('toolsSectionOpen') === 'true';
         if (isOpen) {
             toolsSection.classList.add('open');
@@ -651,12 +633,8 @@ function initToolsToggle() {
 
 // ========== INITIALIZATION ==========
 function init() {
-    // Check version and migrate settings if needed
     checkAppVersion();
-    
     checkMobile();
-      initSupabase();
-
     window.addEventListener('resize', checkMobile);
     
     Papa.parse(CSV_URL, {
@@ -664,7 +642,6 @@ function init() {
         header: true,
         dynamicTyping: true,
         complete: function(results) {
-            // Filter and sort data
             allRows = results.data.filter(row => row.Date && row["Water Level (moh)"]);
             allRows.sort((a, b) => {
                 const dateA = getDateObject(a.Date);
@@ -672,15 +649,12 @@ function init() {
                 return dateB - dateA;
             });
             
-            // Populate UI
             populateYearOptions();
             updateLatestCard();
             
-            // Initialize converters and tools toggle
             initConverters();
             initToolsToggle();
             
-            // Set up event listeners
             document.getElementById('yearSelect').addEventListener('change', function() {
                 renderTable(this.value);
             });
@@ -688,11 +662,14 @@ function init() {
             document.getElementById('refreshBtn').onclick = function(e) { e.preventDefault(); refreshData(); };
             document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
             document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
-          // Subscribe button
-document.getElementById('subscribeBtn').onclick = function(e) {
-    e.preventDefault();
-    subscribeToNotifications();
-};
+            
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            if (subscribeBtn) {
+                subscribeBtn.onclick = function(e) { 
+                    e.preventDefault(); 
+                    subscribeToNotifications(); 
+                };
+            }
             
             document.querySelector('.modal-close').onclick = closeModal;
             window.onclick = function(event) {
@@ -701,53 +678,6 @@ document.getElementById('subscribeBtn').onclick = function(e) {
         }
     });
 }
-
-// ========== PUSH NOTIFICATIONS ==========
-const VAPID_PUBLIC_KEY = 'BNgytdpeUT9Cn30LwXrM5QwqbLmJjVprH1vf6coVCYRgfWUJQ8SnLa2m6xsmdSuHuGzHSR47-1CRhlj0hkGy-qw'; // ← Paste your public key
-
-async function subscribeToNotifications() {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        showToast('⚠️ Push varsler støttes ikke i denne nettleseren', true);
-        return;
-    }
-    
-    try {
-        // Request permission
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-            showToast('❌ Du må tillate varsler for å motta dem', true);
-            return;
-        }
-        
-        // Get service worker registration
-        const swReg = await navigator.serviceWorker.ready;
-        
-        // Subscribe to push
-        const subscription = await swReg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: VAPID_PUBLIC_KEY
-        });
-        
-        // Send subscription to Supabase
-        const { data, error } = await supabase
-            .from('subscriptions')
-            .insert([{
-                endpoint: subscription.endpoint,
-                keys: subscription.toJSON().keys,
-                user_agent: navigator.userAgent
-            }]);
-        
-        if (error) throw error;
-        
-        showToast('✅ Du vil nå motta varsler når vannstanden endres');
-        
-    } catch (err) {
-        console.error('Subscription failed:', err);
-        showToast('❌ Kunne ikke aktivere varsler', true);
-    }
-}
-
-
 
 // Start everything
 init();
