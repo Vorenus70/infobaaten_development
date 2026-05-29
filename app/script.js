@@ -7,6 +7,11 @@ const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
 // App version – INCREMENT THIS FOR EACH RELEASE
 const APP_VERSION = '2.0.0';
 
+// Initialize Supabase client (add at top of file)
+const supabaseUrl = 'https://pcvfwioshtxuctjcgkrr.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBjdmZ3aW9zaHR4dWN0amNna3JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNDE5NTgsImV4cCI6MjA5NDYxNzk1OH0.5OydO9ELHHwVWMp4gbSDSIXx-wAE4pB8F8H0ivDVXB4';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
 let allRows = [];
 let chartInstance = null;   
 let isMobile = false;
@@ -629,6 +634,53 @@ function init() {
         }
     });
 }
+
+// ========== PUSH NOTIFICATIONS ==========
+const VAPID_PUBLIC_KEY = 'BNgytdpeUT9Cn30LwXrM5QwqbLmJjVprH1vf6coVCYRgfWUJQ8SnLa2m6xsmdSuHuGzHSR47-1CRhlj0hkGy-qw'; // ← Paste your public key
+
+async function subscribeToNotifications() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        showToast('⚠️ Push varsler støttes ikke i denne nettleseren', true);
+        return;
+    }
+    
+    try {
+        // Request permission
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            showToast('❌ Du må tillate varsler for å motta dem', true);
+            return;
+        }
+        
+        // Get service worker registration
+        const swReg = await navigator.serviceWorker.ready;
+        
+        // Subscribe to push
+        const subscription = await swReg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: VAPID_PUBLIC_KEY
+        });
+        
+        // Send subscription to Supabase
+        const { data, error } = await supabase
+            .from('subscriptions')
+            .insert([{
+                endpoint: subscription.endpoint,
+                keys: subscription.toJSON().keys,
+                user_agent: navigator.userAgent
+            }]);
+        
+        if (error) throw error;
+        
+        showToast('✅ Du vil nå motta varsler når vannstanden endres');
+        
+    } catch (err) {
+        console.error('Subscription failed:', err);
+        showToast('❌ Kunne ikke aktivere varsler', true);
+    }
+}
+
+
 
 // Start everything
 init();
