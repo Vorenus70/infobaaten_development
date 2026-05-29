@@ -626,6 +626,11 @@ function init() {
             document.getElementById('refreshBtn').onclick = function(e) { e.preventDefault(); refreshData(); };
             document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
             document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
+          // Subscribe button
+document.getElementById('subscribeBtn').onclick = function(e) {
+    e.preventDefault();
+    subscribeToNotifications();
+};
             
             document.querySelector('.modal-close').onclick = closeModal;
             window.onclick = function(event) {
