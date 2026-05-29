@@ -88,6 +88,47 @@
                 </table>
             </div>
 
+                        </div>  <!-- closes table-wrapper -->
+
+            <!-- Expandable tools section - Nyttige verktøy -->
+            <div class="tools-section" id="toolsSection">
+                <button class="tools-toggle" id="toolsToggle">
+                    <span>🔧</span> Nyttige verktøy
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="tools-content" id="toolsContent">
+                    <div class="converter-row">
+                        <!-- Nautical miles to km -->
+                        <div class="converter">
+                            <div class="converter-icon">⚓</div>
+                            <div class="converter-info">
+                                <h4>Nautisk mil → km</h4>
+                                <p>1 nautisk mil = 1.852 km</p>
+                            </div>
+                            <div class="converter-input">
+                                <input type="number" id="nauticalMiles" value="1" step="0.1" placeholder="Antall nm">
+                                <span class="converter-equals">=</span>
+                                <span class="converter-result" id="nauticalResult">1.852 km</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Knots to km/h -->
+                        <div class="converter">
+                            <div class="converter-icon">🚤</div>
+                            <div class="converter-info">
+                                <h4>Knop → km/t</h4>
+                                <p>1 knop = 1.852 km/t</p>
+                            </div>
+                            <div class="converter-input">
+                                <input type="number" id="knots" value="1" step="0.1" placeholder="Antall knop">
+                                <span class="converter-equals">=</span>
+                                <span class="converter-result" id="knotsResult">1.852 km/t</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="dashboard-footer">
                 <div class="footer-content">
                     <a href="https://www.facebook.com/infobaaten" target="_blank" rel="noopener noreferrer" class="facebook-btn">
