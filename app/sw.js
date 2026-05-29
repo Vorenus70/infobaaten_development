@@ -36,6 +36,43 @@ self.addEventListener('fetch', event => {
   );
 });
 
+// Handle push notifications
+self.addEventListener('push', event => {
+    let data = { 
+        title: 'InfoBåten', 
+        body: 'Vannstanden er oppdatert', 
+        icon: '/app/icons/icon-192.png',
+        badge: '/app/icons/icon-32.png'
+    };
+    
+    if (event.data) {
+        try {
+            const parsed = event.data.json();
+            data = { ...data, ...parsed };
+        } catch (e) {
+            data.body = event.data.text();
+        }
+    }
+    
+    event.waitUntil(
+        self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: data.icon,
+            badge: data.badge,
+            vibrate: [200, 100, 200],
+            data: { url: '/app/' }
+        })
+    );
+});
+
+// Handle notification click
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow(event.notification.data?.url || '/app/')
+    );
+});
+
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
