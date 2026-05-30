@@ -68,21 +68,28 @@ async function subscribeToNotifications() {
             throw new Error('Supabase not loaded yet');
         }
         
+        // Use upsert to avoid duplicate errors
         const { error } = await supabase
-    .from('subscriptions')
-    .upsert([{
-        endpoint: subscription.endpoint,
-        keys: subscription.toJSON().keys,
-        user_agent: navigator.userAgent
-    }], { onConflict: 'endpoint' });
+            .from('subscriptions')
+            .upsert([{
+                endpoint: subscription.endpoint,
+                keys: subscription.toJSON().keys,
+                user_agent: navigator.userAgent
+            }], { onConflict: 'endpoint' });
         
         if (error) throw error;
         
+        // Success!
         showToast('✅ Du vil nå motta varsler når vannstanden endres');
         
     } catch (err) {
         console.error('Subscription failed:', err);
-        showToast('❌ Kunne ikke aktivere varsler', true);
+        // Check if it's a duplicate error (still a success for the user)
+        if (err.code === '23505') {
+            showToast('✅ Du er allerede abonnert på varsler');
+        } else {
+            showToast('❌ Kunne ikke aktivere varsler', true);
+        }
     }
 }
 
