@@ -69,12 +69,12 @@ async function subscribeToNotifications() {
         }
         
         const { error } = await supabase
-            .from('subscriptions')
-            .insert([{
-                endpoint: subscription.endpoint,
-                keys: subscription.toJSON().keys,
-                user_agent: navigator.userAgent
-            }]);
+    .from('subscriptions')
+    .upsert([{
+        endpoint: subscription.endpoint,
+        keys: subscription.toJSON().keys,
+        user_agent: navigator.userAgent
+    }], { onConflict: 'endpoint' });
         
         if (error) throw error;
         
