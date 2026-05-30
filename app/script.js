@@ -701,7 +701,7 @@ function init() {
     
     // Initialize Supabase (doesn't block data loading)
     initSupabase();
-    
+    checkSubscriptionStatus();
     Papa.parse(CSV_URL, {
         download: true,
         header: true,
