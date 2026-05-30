@@ -43,6 +43,38 @@ function checkAppVersion() {
 }
 
 // ========== PUSH NOTIFICATIONS ==========
+// Check if already subscribed
+async function checkSubscriptionStatus() {
+    try {
+        const swReg = await navigator.serviceWorker.ready;
+        const subscription = await swReg.pushManager.getSubscription();
+        
+        const subscribeBtn = document.getElementById('subscribeBtn');
+        if (subscribeBtn) {
+            if (subscription) {
+                // Already subscribed – show different icon/text
+                subscribeBtn.innerHTML = `<svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    <line x1="18" y1="4" x2="6" y2="20"/>
+                </svg>`;
+                subscribeBtn.title = 'Slå av varsler';
+            } else {
+                // Not subscribed
+                subscribeBtn.innerHTML = `<svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>`;
+                subscribeBtn.title = 'Få varsler';
+            }
+        }
+        return subscription;
+    } catch (err) {
+        console.error('Check subscription failed:', err);
+        return null;
+    }
+}
+
 async function subscribeToNotifications() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
         showToast('⚠️ Push varsler støttes ikke i denne nettleseren', true);
@@ -50,13 +82,33 @@ async function subscribeToNotifications() {
     }
     
     try {
+        const swReg = await navigator.serviceWorker.ready;
+        const existingSubscription = await swReg.pushManager.getSubscription();
+        
+        // If already subscribed, unsubscribe
+        if (existingSubscription) {
+            await existingSubscription.unsubscribe();
+            
+            // Also remove from Supabase
+            const supabase = initSupabase();
+            if (supabase) {
+                await supabase
+                    .from('subscriptions')
+                    .delete()
+                    .eq('endpoint', existingSubscription.endpoint);
+            }
+            
+            showToast('🔕 Du vil ikke lenger motta varsler');
+            await checkSubscriptionStatus(); // Update button
+            return;
+        }
+        
+        // Not subscribed – subscribe
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
             showToast('❌ Du må tillate varsler for å motta dem', true);
             return;
         }
-        
-        const swReg = await navigator.serviceWorker.ready;
         
         const subscription = await swReg.pushManager.subscribe({
             userVisibleOnly: true,
@@ -68,7 +120,6 @@ async function subscribeToNotifications() {
             throw new Error('Supabase not loaded yet');
         }
         
-        // Use upsert to avoid duplicate errors
         const { error } = await supabase
             .from('subscriptions')
             .upsert([{
@@ -79,20 +130,19 @@ async function subscribeToNotifications() {
         
         if (error) throw error;
         
-        // Success!
         showToast('✅ Du vil nå motta varsler når vannstanden endres');
+        await checkSubscriptionStatus(); // Update button
         
     } catch (err) {
         console.error('Subscription failed:', err);
-        // Check if it's a duplicate error (still a success for the user)
         if (err.code === '23505') {
             showToast('✅ Du er allerede abonnert på varsler');
+            await checkSubscriptionStatus();
         } else {
             showToast('❌ Kunne ikke aktivere varsler', true);
         }
     }
 }
-
 // ========== CORE FUNCTIONS ==========
 function checkMobile() {
     isMobile = window.innerWidth <= 768;
