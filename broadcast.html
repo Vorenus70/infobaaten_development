@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html lang="no">
 <head>
     <meta charset="UTF-8">
@@ -244,6 +246,23 @@
     
     <script>
         const API_URL = 'https://infobaaten-notifications.onrender.com/broadcast';
+
+        <script>
+    const API_URL = 'https://infobaaten-notifications.onrender.com/broadcast';
+    
+    // ========== PASSWORD PROTECTION ==========
+    const PASSWORD = 'infobaten2026';  // ← Change this!
+    
+    const userPassword = prompt('Skriv inn passord for å sende varsel:');
+    if (userPassword !== PASSWORD) {
+        document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-family: sans-serif;"><h1>🔒 Ingen tilgang</h1><p>Du har ikke tilgang til denne siden.</p></div>';
+        throw new Error('Unauthorized');
+    }
+    // ========================================
+    
+    function addEmoji(targetField, emoji) {
+        // ... rest of your code
+    }
         
         // Add emoji to the appropriate field
         function addEmoji(targetField, emoji) {
