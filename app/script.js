@@ -313,7 +313,12 @@ function updateLatestCard() {
     
     const latest = allRows[0];
     const waterLevel = latest["Water Level (moh)"];
-    const changeCm = latest["Change cm/m"];
+    let changeCm = latest["Change cm/m"];
+    
+    // Clean the change value: remove apostrophe and leading '+'
+    if (changeCm) {
+        changeCm = changeCm.toString().replace(/^'/, '').replace(/^\+/, '');
+    }
     
     const isValidWaterLevel = waterLevel && 
                               waterLevel !== "Ikke tilgjengelig" && 
@@ -330,7 +335,7 @@ function updateLatestCard() {
             if (!isNaN(changeNum)) {
                 if (changeNum > 0) {
                     if (changeArrow) changeArrow.textContent = '▲';
-                    if (changeValue) changeValue.textContent = `+${changeText} cm`;
+                    if (changeValue) changeValue.textContent = `${changeText} cm`;
                     latestChangeElem.className = 'latest-change positive';
                 } else if (changeNum < 0) {
                     if (changeArrow) changeArrow.textContent = '▼';
