@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>InfoBåten – Send varsel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #0b5e7e, #1b8cae);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #0b5e7e;
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .subtitle {
+            color: #5f6368;
+            font-size: 14px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e0e5eb;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            color: #0b5e7e;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cde4f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #0b5e7e;
+            box-shadow: 0 0 0 2px rgba(11,94,126,0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .emoji-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .emoji-btn {
+            background: #f1f3f4;
+            border: none;
+            font-size: 20px;
+            padding: 8px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .emoji-btn:hover {
+            background: #e8eaed;
+            transform: scale(1.05);
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            background: linear-gradient(135deg, #0b5e7e, #1b8cae);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        
+        button[type="submit"]:hover {
+            transform: scale(1.01);
+            opacity: 0.95;
+        }
+        
+        .status {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #e6f4ea;
+            color: #0d652d;
+            display: block;
+        }
+        
+        .status.error {
+            background: #fce8e6;
+            color: #c5221f;
+            display: block;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #5f6368;
+            text-align: center;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span>📢</span> Send varsel
+        </h1>
+        <div class="subtitle">
+            Send push-varsel til alle som har abonnert på InfoBåten
+        </div>
+        
+        <form id="notificationForm">
+            <div class="form-group">
+                <label>📌 Tittel</label>
+                <input type="text" id="title" placeholder="F.eks. 📢 InfoBåten" value="🚤 InfoBåten">
+            </div>
+            
+            <div class="form-group">
+                <label>💬 Melding</label>
+                <textarea id="message" placeholder="Skriv meldingen her..."></textarea>
+            </div>
+            
+            <div class="emoji-buttons">
+                <button type="button" class="emoji-btn" onclick="addEmoji('📢')">📢</button>
+                <button type="button" class="emoji-btn" onclick="addEmoji('🚤')">🚤</button>
+                <button type="button" class="emoji-btn" onclick="addEmoji('📊')">📊</button>
+                <button type="button" class="emoji-btn" onclick="addEmoji('🌊')">🌊</button>
+                <button type="button" class="emoji-btn" onclick="addEmoji('💧')">💧</button>
+                <button type="button" class="emoji-btn" onclick="addEmoji('⚠️')">⚠️</button>
+                <button type="button" class="emoji-btn" onclick="addEmoji('✅')">✅</button>
+                <button type="button" class="emoji-btn" onclick="addEmoji('🔔')">🔔</button>
+            </div>
+            
+            <button type="submit">📨 Send varsel</button>
+        </form>
+        
+        <div id="status" class="status"></div>
+        
+        <div class="info">
+            ⚡ Varselet sendes til alle som har aktivert push-varsler i InfoBåten-appen.<br>
+            📱 Test på din egen telefon først!
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'https://infobaaten-notifications.onrender.com/broadcast';
+        
+        function addEmoji(emoji) {
+            const messageField = document.getElementById('message');
+            messageField.value += emoji + ' ';
+            messageField.focus();
+        }
+        
+        async function sendNotification(title, message) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: title,
+                    message: message
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Kunne ikke sende varsel');
+            }
+            
+            return await response.json();
+        }
+        
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = isError ? 'status error' : 'status success';
+            
+            setTimeout(() => {
+                statusDiv.className = 'status';
+            }, 5000);
+        }
+        
+        document.getElementById('notificationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('title').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!message) {
+                showStatus('❌ Vennligst skriv en melding', true);
+                return;
+            }
+            
+            if (!title) {
+                showStatus('❌ Vennligst skriv en tittel', true);
+                return;
+            }
+            
+            // Disable button while sending
+            const submitBtn = document.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '📨 Sender...';
+            
+            try {
+                const result = await sendNotification(title, message);
+                showStatus(`✅ Varsel sendt til ${result.sent} abonnenter!`);
+                document.getElementById('message').value = '';
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`❌ Feil: ${error.message}`, true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📨 Send varsel';
+            }
+        });
+    </script>
+</body>
+</html>
