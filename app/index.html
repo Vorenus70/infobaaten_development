@@ -169,6 +169,46 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="modal-title">⚙️ Innstillinger og om</span>
+            <span class="modal-close settings-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <!-- Notifikasjonsveiledning -->
+            <div class="settings-section">
+                <h3>📱 Notifikasjonsveiledning</h3>
+                <p>For best mulig varsler på mobil:</p>
+                <ul>
+                    <li>🔔 Sørg for at appen er installert på hjem-skjermen</li>
+                    <li>⚡ Slå av batterioptimalisering for InfoBåten</li>
+                    <li>📱 Åpne appen jevnlig for å holde forbindelsen aktiv</li>
+                    <li>🔕 Sjekk at varsler ikke er dempet i telefonens innstillinger</li>
+                </ul>
+            </div>
+            
+            <!-- Om InfoBåten -->
+            <div class="settings-section">
+                <h3>ℹ️ Om InfoBåten</h3>
+                <p>Vannstand for Osensjøen – sanntidsoppdateringer for båtfolk.</p>
+                <p>📊 Data leveres av GLB og NVE.</p>
+                <p>🚤 Utviklet for å holde deg oppdatert på vannstanden.</p>
+                <p>📧 Kontakt: post@infobaaten.no</p>
+            </div>
+            
+            <!-- Versjon -->
+            <div class="settings-section">
+                <h3>📊 Versjon</h3>
+                <p>App-versjon: <span id="appVersionDisplay">2.0.2</span></p>
+                <p>📅 Sist oppdatert: Juni 2026</p>
+                <p>🔧 Push varsler: <span id="pushStatus">Aktiv</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
     
