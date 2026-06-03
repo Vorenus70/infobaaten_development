@@ -54,3 +54,34 @@ Here is my broadcast.html file:
 [PASTE YOUR BROADCAST.HTML CONTENT HERE]
 
 I want to: [DESCRIBE YOUR REQUEST HERE]
+
+
+*************************************************************
+ PROMPT 4: Work on EVERYTHING (Full project - App + Landing Page + Broadcast)
+text
+I need to work on my complete InfoBåten project.
+
+Here are ALL my files:
+
+=== FILE: app/master.html ===
+[PASTE YOUR MASTER.HTML CONTENT HERE]
+
+=== FILE: index.html (landing page) ===
+[PASTE YOUR INDEX.HTML CONTENT HERE]
+
+=== FILE: style.css (landing page styles) ===
+[PASTE YOUR STYLE.CSS CONTENT HERE]
+
+=== FILE: script.js (landing page scripts) ===
+[PASTE YOUR SCRIPT.JS CONTENT HERE]
+
+=== FILE: broadcast.html ===
+[PASTE YOUR BROADCAST.HTML CONTENT HERE]
+
+Project overview:
+- App: Water level dashboard with CSV data, graphs, notifications, unit converters
+- Landing page: Animated marketing page with device detection and install instructions
+- Broadcast page: [DESCRIBE WHAT BROADCAST.HTML DOES]
+
+I want to: [DESCRIBE YOUR REQUEST HERE - e.g., "update styling across all pages", "fix responsive issues", "add new feature to app and update landing page to mention it"]
+
