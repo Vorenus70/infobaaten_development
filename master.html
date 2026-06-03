@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>InfoBåten – Vannstand Osensjøen</title>
+    <meta name="description" content="Sanntids vannstandhistorikk for Osensjøen. Data oppdateres daglig fra GLB.">
+    <meta name="author" content="InfoBåten">
+    <link rel="icon" type="image/png" href="https://emojicdn.elk.sh/🚤">
+    <link rel="manifest" href="data:application/manifest+json,{
+        %22name%22: %22InfoBåten Vannstand%22,
+        %22short_name%22: %22InfoBåten%22,
+        %22description%22: %22Vannstandhistorikk for Osensjøen – sanntidsoppdateringer%22,
+        %22start_url%22: %22.%22,
+        %22display%22: %22standalone%22,
+        %22theme_color%22: %22#0b5e7e%22,
+        %22background_color%22: %22#eef7ff%22,
+        %22icons%22: [
+            {%22src%22: %22https://emojicdn.elk.sh/🚤?size=192%22, %22sizes%22: %22192x192%22, %22type%22: %22image/png%22},
+            {%22src%22: %22https://emojicdn.elk.sh/🚤?size=512%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}
+        ]
+    }">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script data-goatcounter="https://infobaaten.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: #eef7ff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .site-wrapper {
+            max-width: 100%;
+            background-color: #eef7ff;
+            min-height: 100vh;
+            padding: 40px 32px;
+        }
+
+        .site-header {
+            max-width: 1200px;
+            margin: 0 auto 24px auto;
+            padding: 0 8px 8px 8px;
+        }
+
+        .site-header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            background: linear-gradient(135deg, #1a73e8, #0b5e7e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin: 0;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            display: inline-block;
+            padding-bottom: 4px;
+            border-bottom: 3px solid #1b8cae;
+        }
+
+        .dashboard-card {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1), 0 2px 6px 2px rgba(0,0,0,0.05);
+            border: 1px solid #dadce0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #0b5e7e, #1b8cae);
+            color: white;
+            padding: 20px 28px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .dashboard-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 500;
+        }
+
+        .dashboard-header p {
+            margin: 8px 0 0;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .latest-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 12px;
+            margin: 12px 20px 8px 20px;
+            padding: 10px 20px;
+            border: 1px solid #e0e5eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .latest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #5f6368;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px dashed #e0e5eb;
+        }
+
+        .latest-updated {
+            font-size: 10px;
+            color: #9aa0a6;
+        }
+
+        .latest-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .latest-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #0b5e7e;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .latest-value::after {
+            content: " moh";
+            font-size: 13px;
+            font-weight: 400;
+            color: #5f6368;
+        }
+
+        .latest-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 30px;
+            background-color: #f1f3f4;
+        }
+
+        .change-arrow {
+            font-size: 16px;
+        }
+
+        .change-value {
+            font-size: 16px;
+        }
+
+        .latest-change.positive {
+            color: #0d652d;
+            background-color: #e6f4ea;
+        }
+
+        .latest-change.negative {
+            color: #c5221f;
+            background-color: #fce8e6;
+        }
+
+        .latest-change.neutral {
+            color: #5f6368;
+            background-color: #f1f3f4;
+        }
+
+        .filter-bar {
+            padding: 12px 28px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .filter-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-left label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #5f6368;
+            white-space: nowrap;
+        }
+
+        .filter-left select {
+            padding: 6px 8px;
+            font-size: 13px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            color: #202124;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            color: #5f6368;
+        }
+
+        .action-btn:hover {
+            background-color: #e8eaed;
+            color: #0b5e7e;
+            transform: scale(1.05);
+        }
+
+        .action-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 55vh;
+            min-height: 300px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e8eaed;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #5f6368;
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid #dadce0;
+        }
+
+        .data-table td:nth-child(4),
+        .data-table th:nth-child(4) {
+            text-align: center;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .month-divider td {
+            background-color: #e8eaed;
+            font-weight: 600;
+            text-align: center;
+            padding: 8px;
+            color: #5f6368;
+            font-size: 12px;
+        }
+
+        .col-timestamp { width: 15%; }
+        .col-date { width: 15%; }
+        .col-waterlevel { width: 20%; }
+        .col-change-raw { width: 25%; }
+        .col-change-cm { width: 25%; }
+
+        .dashboard-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #dadce0;
+            padding: 28px 28px 24px 28px;
+            margin-top: 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .facebook-btn {
+            background: linear-gradient(135deg, #1877f2, #0e63b0);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .facebook-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .footer-copyright {
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .refresh-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #0d652d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .refresh-toast.show {
+            opacity: 1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e5eb;
+            background: linear-gradient(135deg, #0b5e7e, #1b8cae);
+            color: white;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        #graphCanvas {
+            width: 100%;
+            max-height: 500px;
+        }
+
+        .modal-note {
+            text-align: center;
+            font-size: 12px;
+            color: #5f6368;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #e0e5eb;
+        }
+
+        .latest-value.no-data {
+            font-size: 18px;
+            font-weight: 400;
+            color: #9aa0a6;
+            font-style: italic;
+        }
+
+        .latest-value.no-data::after {
+            content: "";
+            display: none;
+        }
+
+        /* Tools Section */
+        .tools-section {
+            margin: 16px 20px;
+            border: 1px solid #e0e5eb;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .tools-toggle {
+            width: 100%;
+            padding: 14px 18px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0b5e7e;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .tools-toggle:hover {
+            background-color: #eef2f7;
+        }
+
+        .toggle-icon {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+            font-size: 12px;
+        }
+
+        .tools-section.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .tools-content {
+            display: none;
+            padding: 20px;
+            border-top: 1px solid #e0e5eb;
+            background-color: white;
+        }
+
+        .tools-section.open .tools-content {
+            display: block;
+        }
+
+        .converter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: space-between;
+        }
+
+        .converter {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e0e5eb;
+        }
+
+        .converter-icon {
+            font-size: 28px;
+        }
+
+        .converter-info {
+            flex: 2;
+            min-width: 100px;
+        }
+
+        .converter-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0b5e7e;
+            margin: 0 0 4px 0;
+        }
+
+        .converter-info p {
+            font-size: 11px;
+            color: #5f6368;
+            margin: 0;
+        }
+
+        .converter-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .converter-input input {
+            width: 80px;
+            padding: 8px 10px;
+            border: 1px solid #cde4f0;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            background: white;
+        }
+
+        .converter-input input:focus {
+            outline: none;
+            border-color: #0b5e7e;
+            box-shadow: 0 0 0 2px rgba(11,94,126,0.1);
+        }
+
+        .converter-equals {
+            font-size: 14px;
+            color: #5f6368;
+            font-weight: 500;
+        }
+
+        .converter-result {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0b5e7e;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #cde4f0;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .settings-section {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e0e5eb;
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .settings-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0b5e7e;
+            margin-bottom: 12px;
+        }
+
+        .settings-section p {
+            font-size: 13px;
+            color: #5f6368;
+            margin: 8px 0;
+        }
+
+        .settings-section ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .settings-section li {
+            font-size: 13px;
+            color: #5f6368;
+            margin: 6px 0;
+        }
+
+        @media (max-width: 768px) {
+            .hide-on-mobile { display: none; }
+            
+            .site-wrapper { padding: 20px 12px; }
+            .site-header { padding: 0 4px 12px 4px; margin-bottom: 12px; }
+            .site-header h1 { font-size: 18px; white-space: normal; border-bottom-width: 2px; }
+            .dashboard-card { border-radius: 8px; }
+            .dashboard-header { padding: 12px 12px; border-radius: 8px 8px 0 0; }
+            .dashboard-header h2 { font-size: 16px; }
+            .dashboard-header p { font-size: 9px; }
+            .latest-card { margin: 8px 12px 6px 12px; padding: 8px 12px; }
+            .latest-header { font-size: 10px; margin-bottom: 4px; }
+            .latest-updated { font-size: 9px; }
+            .latest-value { font-size: 24px; }
+            .latest-value::after { font-size: 10px; }
+            .latest-change { font-size: 12px; padding: 3px 8px; gap: 4px; }
+            .change-arrow { font-size: 12px; }
+            .change-value { font-size: 12px; }
+            .filter-bar { padding: 8px 12px; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; }
+            .filter-left { gap: 4px; flex-shrink: 1; }
+            .filter-left label { font-size: 12px; }
+            .filter-left select { padding: 5px 6px; font-size: 12px; max-width: 70px; }
+            .action-buttons { gap: 6px; flex-shrink: 0; }
+            .action-btn { padding: 5px; }
+            .action-icon { width: 16px; height: 16px; }
+            .data-table th, .data-table td { padding: 8px 4px; font-size: 11px; }
+            .table-wrapper { max-height: 50vh; min-height: 250px; }
+            .dashboard-footer { padding: 16px 12px; }
+            .facebook-btn { padding: 5px 12px; font-size: 11px; }
+            .footer-copyright { font-size: 9px; }
+            .refresh-toast { bottom: 80px; font-size: 11px; padding: 6px 12px; }
+            .modal-content { margin: 20% auto; width: 95%; }
+            .modal-header { padding: 12px 16px; }
+            .modal-title { font-size: 16px; }
+            .modal-body { padding: 12px; }
+            #graphCanvas { max-height: 350px; }
+            .modal-note { font-size: 10px; }
+            .tools-section { margin: 12px; }
+            .tools-toggle { padding: 12px 14px; font-size: 13px; }
+            .tools-content { padding: 12px; }
+            .converter-row { flex-direction: column; gap: 12px; }
+            .converter { flex-wrap: wrap; justify-content: space-between; }
+            .converter-info { flex: 1; min-width: auto; }
+            .converter-icon { font-size: 24px; }
+            .converter-info h4 { font-size: 13px; }
+            .converter-info p { font-size: 10px; }
+            .converter-input input { width: 70px; padding: 6px 8px; font-size: 13px; }
+            .converter-result { font-size: 13px; padding: 4px 10px; min-width: 70px; }
+        }
+
+        @media (min-width: 1200px) {
+            .site-wrapper { padding: 48px 40px; }
+            .site-header h1 { font-size: 28px; }
+            .dashboard-header { padding: 24px 32px; }
+            .filter-bar { padding: 14px 32px; }
+            .dashboard-footer { padding: 32px 32px 26px 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-wrapper">
+        <div class="site-header">
+            <h1>InfoBåten Vannstandhistorikk</h1>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="dashboard-header">
+                <h2>🚤 Osensjøen – Vannstandhistorikk</h2>
+                <p>Oppdateres daglig automatisk | Data fra GLB</p>
+            </div>
+
+            <div class="latest-card" id="latestCard">
+                <div class="latest-header">
+                    <span>📊 Siste måling</span>
+                    <span class="latest-updated" id="latestUpdated">Laster...</span>
+                </div>
+                <div class="latest-content">
+                    <div class="latest-value" id="latestValue">--.--</div>
+                    <div class="latest-change" id="latestChange">
+                        <span class="change-arrow"></span>
+                        <span class="change-value"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-left">
+                    <label for="yearSelect">Vis år:</label>
+                    <select id="yearSelect">
+                        <option value="all">Alle år</option>
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn" id="refreshBtn" title="Oppdater data">
+                        <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M23 4v6h-6"/>
+                            <path d="M1 20v-6h6"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/>
+                            <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" id="exportBtn" title="Last ned CSV">
+                        <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" id="graphBtn" title="Vis graf">
+                        <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 20V10"/>
+                            <path d="M12 20V4"/>
+                            <path d="M6 20v-6"/>
+                            <rect x="2" y="2" width="20" height="20" rx="2" ry="2"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" id="subscribeBtn" title="Få varsler">
+                        <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" id="settingsBtn" title="Innstillinger">
+                        <svg class="action-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table" id="waterTable">
+                    <thead>
+                        <tr>
+                            <th class="col-timestamp hide-on-mobile">Tid</th>
+                            <th class="col-date">Dato</th>
+                            <th class="col-waterlevel">Vannstand (moh)</th>
+                            <th class="col-change-raw">Endring m</th>
+                            <th class="col-change-cm">Endring cm</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="tools-section" id="toolsSection">
+                <button class="tools-toggle" id="toolsToggle">
+                    <span>🔧</span> Nyttige verktøy
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="tools-content" id="toolsContent">
+                    <div class="converter-row">
+                        <div class="converter">
+                            <div class="converter-icon">⚓</div>
+                            <div class="converter-info">
+                                <h4>Nautisk mil → km</h4>
+                                <p>1 nautisk mil = 1.852 km</p>
+                            </div>
+                            <div class="converter-input">
+                                <input type="number" id="nauticalMiles" value="1" step="0.1" placeholder="Antall nm">
+                                <span class="converter-equals">=</span>
+                                <span class="converter-result" id="nauticalResult">1.852 km</span>
+                            </div>
+                        </div>
+                        <div class="converter">
+                            <div class="converter-icon">🚤</div>
+                            <div class="converter-info">
+                                <h4>Knop → km/t</h4>
+                                <p>1 knop = 1.852 km/t</p>
+                            </div>
+                            <div class="converter-input">
+                                <input type="number" id="knots" value="1" step="0.1" placeholder="Antall knop">
+                                <span class="converter-equals">=</span>
+                                <span class="converter-result" id="knotsResult">1.852 km/t</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-footer">
+                <div class="footer-content">
+                    <a href="https://www.facebook.com/infobaaten" target="_blank" rel="noopener noreferrer" class="facebook-btn">
+                        <span>👍</span> Like på Facebook
+                    </a>
+                    <div class="footer-copyright">
+                        © 2026 InfoBåten
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graph Modal -->
+    <div id="graphModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">📊 Vannstandsendring (cm)</span>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <canvas id="graphCanvas"></canvas>
+                <div class="modal-note">Grønne søyler = stigning | Røde søyler = fall</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">⚙️ Innstillinger og om</span>
+                <span class="modal-close settings-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>📱 Notifikasjonsveiledning</h3>
+                    <p>For best mulig varsler på mobil:</p>
+                    <ul>
+                        <li>🔔 Sørg for at appen er installert på hjem-skjermen</li>
+                        <li>⚡ Slå av batterioptimalisering for InfoBåten</li>
+                        <li>📱 Åpne appen jevnlig for å holde forbindelsen aktiv</li>
+                        <li>🔕 Sjekk at varsler ikke er dempet i telefonens innstillinger</li>
+                    </ul>
+                </div>
+                <div class="settings-section">
+                    <h3>ℹ️ Om InfoBåten</h3>
+                    <p>Vannstand for Osensjøen – sanntidsoppdateringer for båtfolk.</p>
+                    <p>📊 Data leveres av GLB og NVE.</p>
+                    <p>🚤 Utviklet for å holde deg oppdatert på vannstanden.</p>
+                    <p>📧 Kontakt: <a href="mailto:post@infobaaten.no">post@infobaaten.no</a></p>
+                </div>
+                <div class="settings-section">
+                    <h3>📊 Versjon</h3>
+                    <p>App-versjon: <span id="appVersionDisplay">
