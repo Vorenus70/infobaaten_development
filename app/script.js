@@ -770,10 +770,21 @@ function init() {
             }
             
             // Version display
-            const versionSpan = document.getElementById('appVersionDisplay');
-            if (versionSpan) {
-                versionSpan.innerText = APP_VERSION;
-            }
+            // Set last updated timestamp
+const lastUpdatedSpan = document.getElementById('lastUpdatedDisplay');
+if (lastUpdatedSpan) {
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('no-NO', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+    const formattedTime = now.toLocaleTimeString('no-NO', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    lastUpdatedSpan.innerText = `${formattedDate} kl. ${formattedTime}`;
+}
             
             // Graph modal close
             document.querySelector('.modal-close').onclick = closeModal;
