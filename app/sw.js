@@ -1,4 +1,4 @@
-const CACHE_NAME = 'infobaaten-dev-v1';
+const CACHE_NAME = 'infobaaten-dev-v2';
 const urlsToCache = [
   '/infobaaten_development/app/',
   '/infobaaten_development/app/index.html',
