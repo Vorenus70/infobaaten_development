@@ -357,10 +357,12 @@ body {
 
 .modal-content {
     background-color: white;
-    margin: 10% auto;
+    margin: 5% auto;
     padding: 0;
     width: 90%;
-    max-width: 800px;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
     border-radius: 16px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
