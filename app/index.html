@@ -169,7 +169,7 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
+<!-- Settings Modal -->
 <div id="settingsModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -177,6 +177,7 @@
             <span class="modal-close settings-close">&times;</span>
         </div>
         <div class="modal-body">
+            
             <!-- Notifikasjonsveiledning -->
             <div class="settings-section">
                 <h3>📱 Notifikasjonsveiledning</h3>
@@ -189,22 +190,23 @@
                 </ul>
             </div>
             
-            <!-- Om InfoBåten -->
+            <!-- Om InfoBåten (with contact email) -->
             <div class="settings-section">
                 <h3>ℹ️ Om InfoBåten</h3>
                 <p>Vannstand for Osensjøen – sanntidsoppdateringer for båtfolk.</p>
                 <p>📊 Data leveres av GLB og NVE.</p>
                 <p>🚤 Utviklet for å holde deg oppdatert på vannstanden.</p>
-                <p>📧 Kontakt: post@infobaaten.no</p>
+                <p>📧 Kontakt: <a href="mailto:post@infobaaten.no">post@infobaaten.no</a></p>
             </div>
             
             <!-- Versjon -->
             <div class="settings-section">
                 <h3>📊 Versjon</h3>
-                <p>App-versjon: <span id="appVersionDisplay">2.0.2</span></p>
-                <p>📅 Sist oppdatert: Juni 2026</p>
+                <p>App-versjon: <span id="appVersionDisplay">2.0.3</span></p>
+                <p>📅 Sist oppdatert: <span id="lastUpdatedDisplay">--</span></p>
                 <p>🔧 Push varsler: <span id="pushStatus">Aktiv</span></p>
             </div>
+            
         </div>
     </div>
 </div>
