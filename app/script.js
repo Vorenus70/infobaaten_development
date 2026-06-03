@@ -735,19 +735,27 @@ function init() {
             document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
             document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
             
-            // Settings button
+            // Settings button - with touch support for mobile
             const settingsBtn = document.getElementById('settingsBtn');
             if (settingsBtn) {
                 settingsBtn.onclick = function(e) {
                     e.preventDefault();
                     document.getElementById('settingsModal').style.display = 'block';
                 };
+                settingsBtn.ontouchstart = function(e) {
+                    e.preventDefault();
+                    document.getElementById('settingsModal').style.display = 'block';
+                };
             }
             
-            // Settings modal close
+            // Settings modal close - with touch support for mobile
             const settingsClose = document.querySelector('.settings-close');
             if (settingsClose) {
                 settingsClose.onclick = function() {
+                    document.getElementById('settingsModal').style.display = 'none';
+                };
+                settingsClose.ontouchstart = function(e) {
+                    e.preventDefault();
                     document.getElementById('settingsModal').style.display = 'none';
                 };
             }
