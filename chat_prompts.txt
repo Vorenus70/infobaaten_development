@@ -1,0 +1,56 @@
+PROMPT 1: Work on the APP (Water level dashboard)
+text
+I need to work on my InfoBåten water level dashboard app.
+
+Here is my complete master.html file (v2.0.4):
+
+=== FILE: app/master.html ===
+[PASTE YOUR MASTER.HTML CONTENT HERE]
+
+Current features:
+- CSV data from Google Sheets
+- Year filter with month grouping
+- Graph with trendline and average
+- CSV export
+- Push notifications via Supabase
+- Unit converters (nautical miles, knots)
+- Responsive design
+
+I want to: [DESCRIBE YOUR REQUEST HERE]
+
+  *******************************************************************'
+  PROMPT 2: Work on the LANDING PAGE (Marketing/entry page)
+text
+I need to work on my InfoBåten landing page.
+
+Here are my files:
+
+=== FILE: index.html ===
+[PASTE YOUR INDEX.HTML CONTENT HERE]
+
+=== FILE: style.css ===
+[PASTE YOUR STYLE.CSS CONTENT HERE]
+
+=== FILE: script.js ===
+[PASTE YOUR SCRIPT.JS CONTENT HERE]
+
+Current features:
+- Animated background with particles
+- Device detection (mobile vs desktop)
+- Dynamic CTA button
+- Feature section with cards
+- Installation steps
+- Floating mockup of the app
+
+I want to: [DESCRIBE YOUR REQUEST HERE]
+********************************************************
+PROMPT 3: Work on BROADCAST.HTML (Broadcast/info page)
+text
+I need to work on my InfoBåten broadcast page.
+
+Here is my broadcast.html file:
+
+=== FILE: broadcast.html ===
+[PASTE YOUR BROADCAST.HTML CONTENT HERE]
+
+I want to: [DESCRIBE YOUR REQUEST HERE]
