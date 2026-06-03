@@ -747,6 +747,43 @@ body {
     text-align: center;
 }
 
+/* Settings modal sections */
+.settings-section {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e5eb;
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.settings-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0b5e7e;
+    margin-bottom: 12px;
+}
+
+.settings-section p {
+    font-size: 13px;
+    color: #5f6368;
+    margin: 8px 0;
+}
+
+.settings-section ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.settings-section li {
+    font-size: 13px;
+    color: #5f6368;
+    margin: 6px 0;
+}
+
 /* Mobile styles for tools section */
 @media (max-width: 768px) {
     .tools-section {
