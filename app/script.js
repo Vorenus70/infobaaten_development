@@ -707,6 +707,7 @@ function init() {
     // Initialize Supabase (doesn't block data loading)
     initSupabase();
     checkSubscriptionStatus();
+    
     Papa.parse(CSV_URL, {
         download: true,
         header: true,
@@ -733,23 +734,25 @@ function init() {
             document.getElementById('refreshBtn').onclick = function(e) { e.preventDefault(); refreshData(); };
             document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
             document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
-          // Settings button
-const settingsBtn = document.getElementById('settingsBtn');
-if (settingsBtn) {
-    settingsBtn.onclick = function(e) {
-        e.preventDefault();
-        document.getElementById('settingsModal').style.display = 'block';
-    };
-}
-
-// Settings modal close
-const settingsClose = document.querySelector('.settings-close');
-if (settingsClose) {
-    settingsClose.onclick = function() {
-        document.getElementById('settingsModal').style.display = 'none';
-    };
-}
             
+            // Settings button
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsBtn) {
+                settingsBtn.onclick = function(e) {
+                    e.preventDefault();
+                    document.getElementById('settingsModal').style.display = 'block';
+                };
+            }
+            
+            // Settings modal close
+            const settingsClose = document.querySelector('.settings-close');
+            if (settingsClose) {
+                settingsClose.onclick = function() {
+                    document.getElementById('settingsModal').style.display = 'none';
+                };
+            }
+            
+            // Subscribe button
             const subscribeBtn = document.getElementById('subscribeBtn');
             if (subscribeBtn) {
                 subscribeBtn.onclick = function(e) { 
@@ -757,18 +760,24 @@ if (settingsClose) {
                     subscribeToNotifications(); 
                 };
             }
-            // Inside the init() complete callback, after setting up other buttons
-const versionSpan = document.getElementById('appVersionDisplay');
-if (versionSpan) {
-    versionSpan.innerText = APP_VERSION;
-}
-          // Add this to the existing window.onclick function
-if (event.target === document.getElementById('settingsModal')) {
-    document.getElementById('settingsModal').style.display = 'none';
-}
+            
+            // Version display
+            const versionSpan = document.getElementById('appVersionDisplay');
+            if (versionSpan) {
+                versionSpan.innerText = APP_VERSION;
+            }
+            
+            // Graph modal close
             document.querySelector('.modal-close').onclick = closeModal;
+            
+            // Window click handler (for both modals)
             window.onclick = function(event) {
-                if (event.target === document.getElementById('graphModal')) closeModal();
+                if (event.target === document.getElementById('graphModal')) {
+                    closeModal();
+                }
+                if (event.target === document.getElementById('settingsModal')) {
+                    document.getElementById('settingsModal').style.display = 'none';
+                }
             };
         },
         error: function(err) {
@@ -777,6 +786,5 @@ if (event.target === document.getElementById('settingsModal')) {
         }
     });
 }
-
 // Start everything
 init();
