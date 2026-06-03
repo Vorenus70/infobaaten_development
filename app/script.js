@@ -29,6 +29,28 @@ let allRows = [];
 let chartInstance = null;   
 let isMobile = false;
 
+// ========== VERSION DISPLAY (RELIABLE WITH RETRY) ==========
+function updateVersionDisplay() {
+    const versionSpan = document.getElementById('appVersionDisplay');
+    if (versionSpan) {
+        if (versionSpan.innerText !== APP_VERSION) {
+            versionSpan.innerText = APP_VERSION;
+            console.log('✅ Version updated to:', APP_VERSION);
+        }
+    } else {
+        // Element not found yet, try again
+        console.log('⏳ Version element not found, retrying...');
+        setTimeout(updateVersionDisplay, 100);
+    }
+}
+
+// Call version update when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateVersionDisplay);
+} else {
+    updateVersionDisplay();
+}
+
 // ========== VERSION CHECK & MIGRATION ==========
 function checkAppVersion() {
     const storedVersion = localStorage.getItem('infobaaten_app_version');
@@ -769,22 +791,28 @@ function init() {
                 };
             }
             
-            // Version display
+            // Version display - BACKUP UPDATE inside Papa.parse
+            const versionSpan = document.getElementById('appVersionDisplay');
+            if (versionSpan) {
+                versionSpan.innerText = APP_VERSION;
+                console.log('✅ Version backup update:', APP_VERSION);
+            }
+            
             // Set last updated timestamp
-const lastUpdatedSpan = document.getElementById('lastUpdatedDisplay');
-if (lastUpdatedSpan) {
-    const now = new Date();
-    const formattedDate = now.toLocaleDateString('no-NO', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-    const formattedTime = now.toLocaleTimeString('no-NO', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    lastUpdatedSpan.innerText = `${formattedDate} kl. ${formattedTime}`;
-}
+            const lastUpdatedSpan = document.getElementById('lastUpdatedDisplay');
+            if (lastUpdatedSpan) {
+                const now = new Date();
+                const formattedDate = now.toLocaleDateString('no-NO', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                const formattedTime = now.toLocaleTimeString('no-NO', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                lastUpdatedSpan.innerText = `${formattedDate} kl. ${formattedTime}`;
+            }
             
             // Graph modal close
             document.querySelector('.modal-close').onclick = closeModal;
