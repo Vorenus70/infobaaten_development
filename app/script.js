@@ -757,7 +757,15 @@ if (settingsClose) {
                     subscribeToNotifications(); 
                 };
             }
-            
+            // Inside the init() complete callback, after setting up other buttons
+const versionSpan = document.getElementById('appVersionDisplay');
+if (versionSpan) {
+    versionSpan.innerText = APP_VERSION;
+}
+          // Add this to the existing window.onclick function
+if (event.target === document.getElementById('settingsModal')) {
+    document.getElementById('settingsModal').style.display = 'none';
+}
             document.querySelector('.modal-close').onclick = closeModal;
             window.onclick = function(event) {
                 if (event.target === document.getElementById('graphModal')) closeModal();
