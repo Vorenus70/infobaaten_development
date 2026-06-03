@@ -5,7 +5,7 @@ const monthNames = ['januar', 'februar', 'mars', 'april', 'mai', 'juni',
                     'juli', 'august', 'september', 'oktober', 'november', 'desember'];
 
 // App version – INCREMENT THIS FOR EACH RELEASE
-const APP_VERSION = '2.0.3';
+const APP_VERSION = '2.0.1';
 
 // Supabase configuration
 const SUPABASE_URL = 'https://pcvfwioshtxuctjcgkrr.supabase.co';
