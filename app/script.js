@@ -733,6 +733,22 @@ function init() {
             document.getElementById('refreshBtn').onclick = function(e) { e.preventDefault(); refreshData(); };
             document.getElementById('exportBtn').onclick = function(e) { e.preventDefault(); exportToCSV(); };
             document.getElementById('graphBtn').onclick = function(e) { e.preventDefault(); showGraph(); };
+          // Settings button
+const settingsBtn = document.getElementById('settingsBtn');
+if (settingsBtn) {
+    settingsBtn.onclick = function(e) {
+        e.preventDefault();
+        document.getElementById('settingsModal').style.display = 'block';
+    };
+}
+
+// Settings modal close
+const settingsClose = document.querySelector('.settings-close');
+if (settingsClose) {
+    settingsClose.onclick = function() {
+        document.getElementById('settingsModal').style.display = 'none';
+    };
+}
             
             const subscribeBtn = document.getElementById('subscribeBtn');
             if (subscribeBtn) {
