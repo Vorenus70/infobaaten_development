@@ -146,12 +146,12 @@ body {
 
 /* ========== SCROLL HINT ========== */
 .scroll-hint {
-    position: absolute;
+    position: fixed;  /* Changed from 'absolute' to 'fixed' */
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
-    z-index: 20;
+    z-index: 100;  /* Increased z-index to stay on top */
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
     border-radius: 30px;
