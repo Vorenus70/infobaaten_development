@@ -73,20 +73,21 @@ body {
 
 /* Additional particles via JS will be added */
 
-/* ========== HERO SECTION ========== */
+/* ========== HERO SECTION - UPDATED ========== */
 .hero {
-    min-height: 100vh;
+    min-height: 85vh;  /* REDUCED from 100vh to 85vh - shows a sliver of next section */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 80px 20px;
+    padding: 60px 20px 40px 20px;  /* Adjusted padding */
+    position: relative;  /* For scroll hint positioning */
 }
 
 .hero-content {
     z-index: 2;
-    margin-bottom: 50px;
+    margin-bottom: 30px;  /* Reduced margin */
 }
 
 .hero-title {
@@ -112,7 +113,7 @@ body {
     font-size: clamp(16px, 4vw, 24px);
     font-weight: 300;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 40px;
+    margin-bottom: 30px;  /* Reduced margin */
     animation: fadeInUp 1s ease-out;
 }
 
@@ -143,6 +144,59 @@ body {
     0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
     70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
     100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+
+/* ========== SCROLL HINT - NEW ========== */
+.scroll-hint {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    z-index: 20;
+    animation: bounce 2s ease-in-out infinite;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.scroll-hint:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateX(-50%) scale(1.1);
+}
+
+.scroll-hint svg {
+    width: 20px;
+    height: 20px;
+    stroke: white;
+    stroke-width: 2.5;
+    fill: none;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* Mobile touch optimization */
+@media (max-width: 768px) {
+    .scroll-hint {
+        width: 35px;
+        height: 35px;
+        bottom: 10px;
+    }
+    
+    .scroll-hint svg {
+        width: 18px;
+        height: 18px;
+    }
 }
 
 /* ========== MOCKUP ========== */
@@ -377,8 +431,17 @@ body {
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
+    .hero {
+        min-height: 80vh;  /* Slightly smaller on mobile */
+        padding: 40px 20px 30px 20px;
+    }
+    
     .hero-title {
-        font-size: 48px;
+        font-size: 42px;
+    }
+    
+    .hero-subtitle {
+        margin-bottom: 25px;
     }
     
     .cta-button {
