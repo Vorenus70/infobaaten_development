@@ -221,11 +221,20 @@ body {
     margin: 0 auto;
 }
 
+.mockup-screenshot {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 30px;
+    object-fit: cover;  /* Ensures image fills nicely */
+    max-height: 500px;   /* Prevents it from being too tall */
+}
 .mockup-screen {
-    background: white;
+    background: transparent;  /* Changed from white to transparent */
     border-radius: 30px;
     overflow: hidden;
-    padding: 15px;
+    padding: 0;
+    position: relative;
 }
 
 .mockup-header {
