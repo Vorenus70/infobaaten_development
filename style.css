@@ -11,6 +11,11 @@ body {
     overflow-x: hidden;
 }
 
+/* Smooth scrolling for the whole page - WORKS ON DESKTOP */
+html {
+    scroll-behavior: smooth;
+}
+
 /* ========== ANIMATED BACKGROUND ========== */
 .animated-bg {
     position: fixed;
@@ -210,7 +215,6 @@ body {
     padding: 12px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     border: 1px solid rgba(255,255,255,0.2);
-    width: 280px;
     margin: 0 auto;
 }
 
@@ -245,7 +249,7 @@ body {
     text-align: center;
     font-size: 36px;
     font-weight: 700;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
     background: linear-gradient(135deg, #fff, #b8e1fc);
     background-clip: text;
     -webkit-background-clip: text;
@@ -256,13 +260,15 @@ body {
 .mobile-only-note {
     text-align: center;
     font-size: 14px;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: 30px;
-    padding: 8px 16px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 40px;
+    padding: 8px 20px;
     background: rgba(0,0,0,0.3);
-    border-radius: 30px;
+    border-radius: 40px;
     display: inline-block;
     width: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .features-grid {
@@ -385,6 +391,11 @@ body {
     transform: translateY(0);
 }
 
+/* ========== DESKTOP (default) ========== */
+.mockup {
+    width: 240px;
+}
+
 /* ========== RESPONSIVE - MOBILE ========== */
 @media (max-width: 768px) {
     .hero {
@@ -429,10 +440,6 @@ body {
     }
     
     /* Mockup - mobile */
-    .mockup-container {
-        padding: 0 16px;
-    }
-    
     .mockup {
         width: 260px;
         padding: 10px;
@@ -448,11 +455,6 @@ body {
         max-height: 420px;
     }
     
-    /* Hide mobile-only note on desktop, show on mobile */
-    .mobile-only-note {
-        display: block;
-    }
-    
     /* Features - mobile */
     .features {
         padding: 50px 16px;
@@ -460,7 +462,13 @@ body {
     
     .section-title {
         font-size: 28px;
+        margin-bottom: 20px;
+    }
+    
+    .mobile-only-note {
+        font-size: 12px;
         margin-bottom: 30px;
+        padding: 6px 16px;
     }
     
     .features-grid {
@@ -521,31 +529,5 @@ body {
     
     .footer-contact {
         font-size: 12px;
-    }
-}
-
-/* ========== DESKTOP IMPROVEMENTS ========== */
-@media (min-width: 769px) {
-    .hero {
-        min-height: 85vh;
-    }
-    
-    .mockup {
-        width: 240px;
-        transition: all 0.3s ease;
-    }
-    
-    .mockup:hover {
-        transform: scale(1.02);
-    }
-    
-    /* Hide mobile-only note on desktop */
-    .mobile-only-note {
-        display: none;
-    }
-    
-    /* Smooth scrolling for the whole page */
-    html {
-        scroll-behavior: smooth;
     }
 }
