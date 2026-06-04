@@ -150,25 +150,82 @@
                 // Show desktop note, hide mobile note
                 if (desktopNote) desktopNote.style.display = 'inline-block';
                 if (mobileNote) mobileNote.style.display = 'none';
-                
-                // Add smooth scroll click handler for desktop
-                if (scrollHint) {
-                    scrollHint.onclick = function() {
-                        document.querySelector('.features').scrollIntoView({behavior: 'smooth'});
-                    };
-                }
             } else {
                 // Mobile user
                 // Hide desktop note, show mobile note
                 if (desktopNote) desktopNote.style.display = 'none';
                 if (mobileNote) mobileNote.style.display = 'inline-block';
                 
-                // Scroll hint click handler for mobile
+                // Get all scrollable sections
+                const sections = [
+                    document.querySelector('.features'),
+                    document.querySelector('.how-it-works'),
+                    document.querySelector('.footer')
+                ];
+                let currentSectionIndex = 0;
+                
+                function isAtBottom() {
+                    const scrollPosition = window.scrollY + window.innerHeight;
+                    const pageHeight = document.body.scrollHeight;
+                    return scrollPosition >= pageHeight - 50;
+                }
+                
+                function updateScrollHintVisibility() {
+                    if (isAtBottom()) {
+                        // At bottom - hide hint
+                        if (scrollHint) scrollHint.style.display = 'none';
+                    } else {
+                        // Not at bottom - show hint
+                        if (scrollHint) scrollHint.style.display = 'flex';
+                    }
+                }
+                
+                function scrollToNextSection() {
+                    const currentScroll = window.scrollY;
+                    let nextSection = null;
+                    
+                    // Find the next section that hasn't been fully viewed
+                    for (let i = 0; i < sections.length; i++) {
+                        const section = sections[i];
+                        if (section) {
+                            const sectionTop = section.offsetTop;
+                            const sectionBottom = sectionTop + section.offsetHeight;
+                            
+                            if (currentScroll < sectionBottom - 100) {
+                                nextSection = section;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (nextSection) {
+                        nextSection.scrollIntoView({behavior: 'smooth', block: 'start'});
+                    } else if (!isAtBottom()) {
+                        // If no next section but not at bottom, scroll to bottom
+                        window.scrollTo({
+                            top: document.body.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                    
+                    // Update visibility after scroll
+                    setTimeout(updateScrollHintVisibility, 500);
+                }
+                
+                // Check visibility on scroll
+                window.addEventListener('scroll', function() {
+                    updateScrollHintVisibility();
+                });
+                
+                // Click handler for scroll hint
                 if (scrollHint) {
                     scrollHint.onclick = function() {
-                        document.querySelector('.features').scrollIntoView({behavior: 'smooth'});
+                        scrollToNextSection();
                     };
                 }
+                
+                // Initial check
+                setTimeout(updateScrollHintVisibility, 100);
             }
         });
     </script>
