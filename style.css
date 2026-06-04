@@ -89,26 +89,25 @@ body {
 }
 
 .hero-title {
-    font-size: clamp(48px, 12vw, 120px);
+    font-size: clamp(48px, 10vw, 120px);
     font-weight: 800;
     letter-spacing: -0.02em;
     background: linear-gradient(135deg, #ffffff, #b8e1fc);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    text-shadow: 0 0 30px rgba(0,0,0,0.3);
-    animation: titleGlow 3s ease-in-out infinite;
     margin-bottom: 20px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 15px;
+    flex-wrap: wrap;
 }
 
 .boat-icon {
     display: inline-block;
     animation: rock 3s ease-in-out infinite;
-    transform-origin: center;
-    font-size: clamp(40px, 10vw, 100px);
+    font-size: clamp(40px, 8vw, 100px);
 }
 
 @keyframes rock {
@@ -116,18 +115,11 @@ body {
     50% { transform: rotate(8deg); }
 }
 
-@keyframes titleGlow {
-    0% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-    50% { text-shadow: 0 0 40px rgba(255,255,255,0.5); }
-    100% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-}
-
 .hero-subtitle {
     font-size: clamp(16px, 4vw, 24px);
     font-weight: 300;
     color: rgba(255,255,255,0.9);
     margin-bottom: 30px;
-    animation: fadeInUp 1s ease-out;
 }
 
 /* CTA Button */
@@ -144,7 +136,6 @@ body {
     text-decoration: none;
     transition: all 0.3s ease;
     box-shadow: 0 0 20px rgba(255,255,255,0.3);
-    animation: pulse 2s infinite;
 }
 
 .cta-button:hover {
@@ -153,50 +144,44 @@ body {
     background: white;
 }
 
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-    70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
-    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-}
-
 /* ========== SCROLL HINT ========== */
 .scroll-hint {
     position: absolute;
-    bottom: 15px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
     z-index: 20;
-    animation: bounce 2s ease-in-out infinite;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(8px);
-    width: auto;
-    min-width: 40px;
-    height: 40px;
-    border-radius: 40px;
+    border-radius: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 0 16px;
-    transition: all 0.3s ease;
+    padding: 8px 16px;
     border: 1px solid rgba(255,255,255,0.3);
-}
-
-.scroll-hint:hover {
-    background: rgba(0,0,0,0.8);
-    transform: translateX(-50%) scale(1.05);
+    transition: all 0.3s ease;
+    animation: bounce 2s ease-in-out infinite;
 }
 
 .scroll-hint span {
     color: white;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
 }
 
 .scroll-hint svg {
     width: 16px;
     height: 16px;
+    stroke: white;
+    stroke-width: 2.5;
+    fill: none;
+}
+
+.scroll-hint:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: translateX(-50%) scale(1.05);
 }
 
 @keyframes bounce {
@@ -207,6 +192,7 @@ body {
 /* ========== MOCKUP ========== */
 .mockup-container {
     animation: floatMockup 4s ease-in-out infinite;
+    padding: 0 20px;
 }
 
 @keyframes floatMockup {
@@ -219,10 +205,10 @@ body {
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(10px);
     border-radius: 40px;
-    padding: 15px;
+    padding: 12px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     border: 1px solid rgba(255,255,255,0.2);
-    width: 300px;
+    width: 280px;
     margin: 0 auto;
 }
 
@@ -239,21 +225,6 @@ body {
     height: auto;
     display: block;
     border-radius: 30px;
-    object-fit: cover;
-    max-height: 500px;
-}
-
-/* Optional: Add subtle inner shadow */
-.mockup-screen::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 30px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
-    pointer-events: none;
 }
 
 /* ========== FEATURES SECTION ========== */
@@ -387,19 +358,7 @@ body {
     opacity: 1;
 }
 
-/* ========== ANIMATIONS ========== */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Scroll reveal */
+/* ========== SCROLL REVEAL ========== */
 .feature-card, .step {
     opacity: 0;
     transform: translateY(30px);
@@ -411,68 +370,155 @@ body {
     transform: translateY(0);
 }
 
-/* ========== RESPONSIVE ========== */
+/* ========== RESPONSIVE - MOBILE ========== */
 @media (max-width: 768px) {
     .hero {
-        min-height: 80vh;
-        padding: 40px 20px 30px 20px;
+        min-height: 70vh;
+        padding: 40px 16px 30px 16px;
     }
     
     .hero-title {
-        font-size: 42px;
+        font-size: 32px;
+        gap: 8px;
     }
     
     .boat-icon {
-        font-size: 36px;
+        font-size: 28px;
     }
     
     .hero-subtitle {
-        margin-bottom: 25px;
+        font-size: 14px;
+        margin-bottom: 20px;
     }
     
     .cta-button {
-        padding: 12px 30px;
-        font-size: 16px;
+        padding: 12px 24px;
+        font-size: 14px;
+        gap: 8px;
     }
     
-    .mockup {
-        width: 260px;
-    }
-    
-    .mockup-screenshot {
-        max-height: 400px;
-    }
-    
+    /* Scroll hint - mobile */
     .scroll-hint {
-        padding: 0 12px;
-        height: 34px;
-        bottom: 10px;
+        bottom: 12px;
+        padding: 6px 12px;
+        gap: 6px;
     }
     
     .scroll-hint span {
-        font-size: 10px;
+        font-size: 11px;
     }
     
     .scroll-hint svg {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
+    }
+    
+    /* Mockup - mobile */
+    .mockup-container {
+        padding: 0 16px;
+    }
+    
+    .mockup {
+        width: 240px;
+        padding: 10px;
+        border-radius: 32px;
+    }
+    
+    .mockup-screen {
+        border-radius: 24px;
+    }
+    
+    .mockup-screenshot {
+        border-radius: 24px;
+    }
+    
+    /* Features - mobile */
+    .features {
+        padding: 50px 16px;
     }
     
     .section-title {
         font-size: 28px;
+        margin-bottom: 30px;
     }
     
     .features-grid {
-        gap: 20px;
+        gap: 16px;
+    }
+    
+    .feature-card {
+        padding: 20px 16px;
+    }
+    
+    .feature-icon {
+        font-size: 36px;
+        margin-bottom: 12px;
+    }
+    
+    .feature-card h3 {
+        font-size: 18px;
+    }
+    
+    .feature-card p {
+        font-size: 13px;
+    }
+    
+    /* How it works - mobile */
+    .how-it-works {
+        padding: 50px 16px;
     }
     
     .steps {
         flex-direction: column;
         align-items: center;
         gap: 30px;
+        margin-top: 30px;
     }
     
     .step {
-        max-width: 250px;
+        max-width: 220px;
+    }
+    
+    .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    .step p {
+        font-size: 14px;
+    }
+    
+    /* Footer - mobile */
+    .footer {
+        padding: 30px 16px;
+    }
+    
+    .footer p {
+        font-size: 12px;
+    }
+    
+    .footer-contact {
+        font-size: 12px;
+    }
+}
+
+/* ========== DESKTOP IMPROVEMENTS ========== */
+@media (min-width: 1024px) {
+    .hero {
+        min-height: 85vh;
+    }
+    
+    .mockup {
+        width: 300px;
+        transition: all 0.3s ease;
+    }
+    
+    .mockup:hover {
+        transform: scale(1.02);
+    }
+    
+    .scroll-hint {
+        transition: all 0.3s ease;
     }
 }
