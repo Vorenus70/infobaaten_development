@@ -210,7 +210,7 @@ body {
     padding: 12px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     border: 1px solid rgba(255,255,255,0.2);
-    width: 280px;
+    width: 320px;
     margin: 0 auto;
 }
 
@@ -375,77 +375,74 @@ body {
 /* ========== RESPONSIVE - MOBILE ========== */
 @media (max-width: 768px) {
     .hero {
-        min-height: 60vh;
-        padding: 30px 16px 20px 16px;
+        min-height: 75vh;
+        padding: 40px 16px 30px 16px;
     }
     
     .hero-title {
-        font-size: 28px;
-        gap: 6px;
+        font-size: 32px;
+        gap: 8px;
     }
     
     .boat-icon {
-        font-size: 24px;
+        font-size: 28px;
     }
     
     .hero-subtitle {
-        font-size: 13px;
+        font-size: 14px;
         margin-bottom: 20px;
     }
     
     .cta-button {
-        padding: 10px 20px;
-        font-size: 13px;
-        gap: 6px;
+        padding: 12px 24px;
+        font-size: 14px;
+        gap: 8px;
     }
     
     /* Scroll hint - mobile */
     .scroll-hint {
-        bottom: 10px;
-        padding: 5px 10px;
-        gap: 5px;
+        bottom: 12px;
+        padding: 6px 12px;
+        gap: 6px;
     }
     
     .scroll-hint span {
-        font-size: 10px;
+        font-size: 11px;
     }
     
     .scroll-hint svg {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
     }
     
-    /* Mockup - mobile - COMPACT */
+    /* Mockup - mobile - MEDIUM size */
     .mockup-container {
         padding: 0 16px;
-        margin-top: 10px;
     }
     
     .mockup {
-        width: 180px;
-        padding: 6px;
-        border-radius: 20px;
+        width: 260px;
+        padding: 10px;
+        border-radius: 32px;
     }
     
     .mockup-screen {
-        border-radius: 14px;
+        border-radius: 22px;
     }
     
     .mockup-screenshot {
-        border-radius: 14px;
-        max-height: 280px;
-        width: auto;
-        margin: 0 auto;
+        border-radius: 22px;
+        max-height: 420px;
     }
     
     /* Features - mobile */
     .features {
-        padding: 40px 16px;
+        padding: 50px 16px;
     }
     
     .section-title {
-        font-size: 24px;
-        margin-bottom: 25px;
+        font-size: 28px;
+        margin-bottom: 30px;
     }
     
     .features-grid {
@@ -453,59 +450,59 @@ body {
     }
     
     .feature-card {
-        padding: 18px 14px;
+        padding: 20px 16px;
     }
     
     .feature-icon {
-        font-size: 32px;
-        margin-bottom: 10px;
+        font-size: 36px;
+        margin-bottom: 12px;
     }
     
     .feature-card h3 {
-        font-size: 16px;
+        font-size: 18px;
     }
     
     .feature-card p {
-        font-size: 12px;
+        font-size: 13px;
     }
     
     /* How it works - mobile */
     .how-it-works {
-        padding: 40px 16px;
+        padding: 50px 16px;
     }
     
     .steps {
         flex-direction: column;
         align-items: center;
-        gap: 25px;
-        margin-top: 25px;
+        gap: 30px;
+        margin-top: 30px;
     }
     
     .step {
-        max-width: 200px;
+        max-width: 220px;
     }
     
     .step-number {
-        width: 45px;
-        height: 45px;
-        font-size: 22px;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
     }
     
     .step p {
-        font-size: 13px;
+        font-size: 14px;
     }
     
     /* Footer - mobile */
     .footer {
-        padding: 25px 16px;
+        padding: 30px 16px;
     }
     
     .footer p {
-        font-size: 11px;
+        font-size: 12px;
     }
     
     .footer-contact {
-        font-size: 11px;
+        font-size: 12px;
     }
 }
 
@@ -516,7 +513,7 @@ body {
     }
     
     .mockup {
-        width: 300px;
+        width: 380px;
         transition: all 0.3s ease;
     }
     
