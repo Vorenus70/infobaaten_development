@@ -210,7 +210,7 @@ body {
     padding: 12px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     border: 1px solid rgba(255,255,255,0.2);
-    width: 320px;
+    width: 280px;
     margin: 0 auto;
 }
 
@@ -250,6 +250,19 @@ body {
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
+}
+
+/* Mobile-only note */
+.mobile-only-note {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 30px;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 30px;
+    display: inline-block;
+    width: auto;
 }
 
 .features-grid {
@@ -415,7 +428,7 @@ body {
         height: 12px;
     }
     
-    /* Mockup - mobile - MEDIUM size */
+    /* Mockup - mobile */
     .mockup-container {
         padding: 0 16px;
     }
@@ -433,6 +446,11 @@ body {
     .mockup-screenshot {
         border-radius: 22px;
         max-height: 420px;
+    }
+    
+    /* Hide mobile-only note on desktop, show on mobile */
+    .mobile-only-note {
+        display: block;
     }
     
     /* Features - mobile */
@@ -507,17 +525,27 @@ body {
 }
 
 /* ========== DESKTOP IMPROVEMENTS ========== */
-@media (min-width: 1024px) {
+@media (min-width: 769px) {
     .hero {
         min-height: 85vh;
     }
     
     .mockup {
-        width: 380px;
+        width: 240px;
         transition: all 0.3s ease;
     }
     
     .mockup:hover {
         transform: scale(1.02);
+    }
+    
+    /* Hide mobile-only note on desktop */
+    .mobile-only-note {
+        display: none;
+    }
+    
+    /* Smooth scrolling for the whole page */
+    html {
+        scroll-behavior: smooth;
     }
 }
