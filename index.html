@@ -46,7 +46,7 @@
         </div>
     </main>
 
-    <!-- Scroll hint - MOVED OUTSIDE main, will be fixed positioned -->
+    <!-- Scroll hint - fixed position on screen -->
     <div class="scroll-hint" id="scrollHint">
         <svg viewBox="0 0 24 24">
             <path d="M12 5v14M5 12l7 7 7-7"/>
@@ -62,7 +62,7 @@
             <div class="desktop-only-note" id="desktopNote">
                 🔔 For å motta varsler, installer appen på din mobil
             </div>
-            <!-- Mobile-only note (hidden on desktop) -->
+            <!-- Mobile-only note -->
             <div class="mobile-only-note" id="mobileNote">
                 📱 Appen er optimalisert for mobil og nettbrett
             </div>
@@ -95,6 +95,10 @@
     <section class="how-it-works">
         <div class="container">
             <h2 class="section-title">Slik installerer du</h2>
+            <!-- Desktop-only note that this is for mobile -->
+            <div class="desktop-install-note" id="desktopInstallNote">
+                📱 Denne veiledningen gjelder kun for mobil og nettbrett
+            </div>
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
@@ -136,6 +140,7 @@
             const scrollHint = document.getElementById('scrollHint');
             const desktopNote = document.getElementById('desktopNote');
             const mobileNote = document.getElementById('mobileNote');
+            const desktopInstallNote = document.getElementById('desktopInstallNote');
             
             if (!isMobile) {
                 // Desktop user
@@ -147,19 +152,20 @@
                 }
                 // Hide scroll hint on desktop
                 if (scrollHint) scrollHint.style.display = 'none';
-                // Show desktop note, hide mobile note
+                // Show desktop notes, hide mobile notes
                 if (desktopNote) desktopNote.style.display = 'inline-block';
                 if (mobileNote) mobileNote.style.display = 'none';
+                if (desktopInstallNote) desktopInstallNote.style.display = 'inline-block';
             } else {
                 // Mobile user
-                // Hide desktop note, show mobile note
+                // Hide desktop notes, show mobile note
                 if (desktopNote) desktopNote.style.display = 'none';
                 if (mobileNote) mobileNote.style.display = 'inline-block';
+                if (desktopInstallNote) desktopInstallNote.style.display = 'none';
                 
                 function isBottomReached() {
                     const scrollPosition = window.scrollY + window.innerHeight;
                     const pageHeight = document.body.scrollHeight;
-                    // Allow 50px tolerance
                     return scrollPosition >= pageHeight - 50;
                 }
                 
@@ -199,23 +205,18 @@
                         if (nextSection) {
                             nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         } else {
-                            // If no next section, scroll to bottom
                             window.scrollTo({
                                 top: document.body.scrollHeight,
                                 behavior: 'smooth'
                             });
                         }
                         
-                        // Update hint after scroll
                         setTimeout(updateScrollHint, 600);
                         setTimeout(updateScrollHint, 1000);
                     };
                 }
                 
-                // Update hint on scroll
                 window.addEventListener('scroll', updateScrollHint);
-                
-                // Initial update
                 updateScrollHint();
             }
         });
