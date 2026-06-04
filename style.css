@@ -11,11 +11,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Smooth scrolling for the whole page - WORKS ON DESKTOP */
-html {
-    scroll-behavior: smooth;
-}
-
 /* ========== ANIMATED BACKGROUND ========== */
 .animated-bg {
     position: fixed;
@@ -152,7 +147,7 @@ html {
 /* ========== SCROLL HINT ========== */
 .scroll-hint {
     position: absolute;
-    bottom: 20px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     cursor: pointer;
@@ -167,7 +162,6 @@ html {
     padding: 8px 16px;
     border: 1px solid rgba(0,0,0,0.1);
     transition: all 0.3s ease;
-    animation: bounce 2s ease-in-out infinite;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -189,11 +183,6 @@ html {
     background: white;
     transform: translateX(-50%) scale(1.05);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(8px); }
 }
 
 /* ========== MOCKUP ========== */
@@ -256,6 +245,22 @@ html {
     color: transparent;
 }
 
+/* Desktop-only note */
+.desktop-only-note {
+    text-align: center;
+    font-size: 14px;
+    color: #ffd966;
+    margin-bottom: 40px;
+    padding: 8px 20px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 40px;
+    display: none;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(255,217,102,0.3);
+}
+
 /* Mobile-only note */
 .mobile-only-note {
     text-align: center;
@@ -265,7 +270,7 @@ html {
     padding: 8px 20px;
     background: rgba(0,0,0,0.3);
     border-radius: 40px;
-    display: inline-block;
+    display: none;
     width: auto;
     margin-left: auto;
     margin-right: auto;
@@ -393,7 +398,7 @@ html {
 
 /* ========== DESKTOP (default) ========== */
 .mockup {
-    width: 240px;
+    width: 220px;
 }
 
 /* ========== RESPONSIVE - MOBILE ========== */
@@ -425,9 +430,15 @@ html {
     
     /* Scroll hint - mobile */
     .scroll-hint {
-        bottom: 12px;
+        bottom: 80px;
         padding: 6px 12px;
         gap: 6px;
+        animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(8px); }
     }
     
     .scroll-hint span {
