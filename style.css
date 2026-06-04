@@ -71,23 +71,21 @@ body {
     100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
 }
 
-/* Additional particles via JS will be added */
-
-/* ========== HERO SECTION - UPDATED ========== */
+/* ========== HERO SECTION ========== */
 .hero {
-    min-height: 85vh;  /* REDUCED from 100vh to 85vh - shows a sliver of next section */
+    min-height: 85vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 60px 20px 40px 20px;  /* Adjusted padding */
-    position: relative;  /* For scroll hint positioning */
+    padding: 60px 20px 40px 20px;
+    position: relative;
 }
 
 .hero-content {
     z-index: 2;
-    margin-bottom: 30px;  /* Reduced margin */
+    margin-bottom: 30px;
 }
 
 .hero-title {
@@ -101,6 +99,21 @@ body {
     text-shadow: 0 0 30px rgba(0,0,0,0.3);
     animation: titleGlow 3s ease-in-out infinite;
     margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.boat-icon {
+    display: inline-block;
+    animation: rock 3s ease-in-out infinite;
+    transform-origin: center;
+    font-size: clamp(40px, 10vw, 100px);
+}
+
+@keyframes rock {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(8deg); }
 }
 
 @keyframes titleGlow {
@@ -113,7 +126,7 @@ body {
     font-size: clamp(16px, 4vw, 24px);
     font-weight: 300;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 30px;  /* Reduced margin */
+    margin-bottom: 30px;
     animation: fadeInUp 1s ease-out;
 }
 
@@ -146,7 +159,7 @@ body {
     100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
 }
 
-/* ========== SCROLL HINT - NEW ========== */
+/* ========== SCROLL HINT ========== */
 .scroll-hint {
     position: absolute;
     bottom: 15px;
@@ -155,48 +168,40 @@ body {
     cursor: pointer;
     z-index: 20;
     animation: bounce 2s ease-in-out infinite;
-    background: rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.6);
     backdrop-filter: blur(8px);
-    width: 40px;
+    width: auto;
+    min-width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+    padding: 0 16px;
     transition: all 0.3s ease;
     border: 1px solid rgba(255,255,255,0.3);
 }
 
 .scroll-hint:hover {
-    background: rgba(255,255,255,0.25);
-    transform: translateX(-50%) scale(1.1);
+    background: rgba(0,0,0,0.8);
+    transform: translateX(-50%) scale(1.05);
+}
+
+.scroll-hint span {
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .scroll-hint svg {
-    width: 20px;
-    height: 20px;
-    stroke: white;
-    stroke-width: 2.5;
-    fill: none;
+    width: 16px;
+    height: 16px;
 }
 
 @keyframes bounce {
     0%, 100% { transform: translateX(-50%) translateY(0); }
     50% { transform: translateX(-50%) translateY(8px); }
-}
-
-/* Mobile touch optimization */
-@media (max-width: 768px) {
-    .scroll-hint {
-        width: 35px;
-        height: 35px;
-        bottom: 10px;
-    }
-    
-    .scroll-hint svg {
-        width: 18px;
-        height: 18px;
-    }
 }
 
 /* ========== MOCKUP ========== */
@@ -221,66 +226,34 @@ body {
     margin: 0 auto;
 }
 
-.mockup-screenshot {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 30px;
-    object-fit: cover;  /* Ensures image fills nicely */
-    max-height: 500px;   /* Prevents it from being too tall */
-}
 .mockup-screen {
-    background: transparent;  /* Changed from white to transparent */
+    background: transparent;
     border-radius: 30px;
     overflow: hidden;
     padding: 0;
     position: relative;
 }
 
-.mockup-header {
-    background: linear-gradient(135deg, #0b5e7e, #1b8cae);
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    border-radius: 12px;
-    margin-bottom: 15px;
+.mockup-screenshot {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 30px;
+    object-fit: cover;
+    max-height: 500px;
 }
 
-.mockup-stats {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    background: #f0f4f8;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-}
-
-.mockup-value {
-    font-size: 28px;
-    font-weight: 700;
-    color: #0b5e7e;
-}
-
-.mockup-change {
-    font-size: 14px;
-    color: #0d652d;
-    font-weight: 500;
-}
-
-.mockup-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #e0e5eb;
-    font-size: 13px;
-    color: #333;
-}
-
-.mockup-up {
-    color: #0d652d;
+/* Optional: Add subtle inner shadow */
+.mockup-screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 30px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+    pointer-events: none;
 }
 
 /* ========== FEATURES SECTION ========== */
@@ -441,12 +414,16 @@ body {
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
     .hero {
-        min-height: 80vh;  /* Slightly smaller on mobile */
+        min-height: 80vh;
         padding: 40px 20px 30px 20px;
     }
     
     .hero-title {
         font-size: 42px;
+    }
+    
+    .boat-icon {
+        font-size: 36px;
     }
     
     .hero-subtitle {
@@ -460,6 +437,25 @@ body {
     
     .mockup {
         width: 260px;
+    }
+    
+    .mockup-screenshot {
+        max-height: 400px;
+    }
+    
+    .scroll-hint {
+        padding: 0 12px;
+        height: 34px;
+        bottom: 10px;
+    }
+    
+    .scroll-hint span {
+        font-size: 10px;
+    }
+    
+    .scroll-hint svg {
+        width: 14px;
+        height: 14px;
     }
     
     .section-title {
