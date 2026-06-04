@@ -45,8 +45,8 @@
             </div>
         </div>
 
-        <!-- Scroll hint - tells users to scroll down -->
-        <div class="scroll-hint" onclick="document.querySelector('.features').scrollIntoView({behavior:'smooth'})">
+        <!-- Scroll hint - visible only on mobile -->
+        <div class="scroll-hint" id="scrollHint">
             <svg viewBox="0 0 24 24">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -58,7 +58,12 @@
     <section class="features">
         <div class="container">
             <h2 class="section-title">Hva får du?</h2>
-            <div class="mobile-only-note">
+            <!-- Desktop-only note about notifications -->
+            <div class="desktop-only-note" id="desktopNote">
+                🔔 For å motta varsler, installer appen på din mobil
+            </div>
+            <!-- Mobile-only note (hidden on desktop) -->
+            <div class="mobile-only-note" id="mobileNote">
                 📱 Appen er optimalisert for mobil og nettbrett
             </div>
             <div class="features-grid">
@@ -128,14 +133,41 @@
             const ctaIcon = document.getElementById('ctaIcon');
             const ctaText = document.getElementById('ctaText');
             const ctaNote = document.getElementById('ctaNote');
+            const scrollHint = document.getElementById('scrollHint');
+            const desktopNote = document.getElementById('desktopNote');
+            const mobileNote = document.getElementById('mobileNote');
             
             if (!isMobile) {
-                // Desktop user – change button to web version
+                // Desktop user
                 if (ctaIcon) ctaIcon.textContent = '🖥️';
                 if (ctaText) ctaText.textContent = 'Gå til nettversjon';
                 if (ctaNote) {
                     ctaNote.textContent = '💻 Åpnes i nettleseren – ingen installasjon nødvendig';
                     ctaNote.style.opacity = '0.7';
+                }
+                // Hide scroll hint on desktop
+                if (scrollHint) scrollHint.style.display = 'none';
+                // Show desktop note, hide mobile note
+                if (desktopNote) desktopNote.style.display = 'inline-block';
+                if (mobileNote) mobileNote.style.display = 'none';
+                
+                // Add smooth scroll click handler for desktop
+                if (scrollHint) {
+                    scrollHint.onclick = function() {
+                        document.querySelector('.features').scrollIntoView({behavior: 'smooth'});
+                    };
+                }
+            } else {
+                // Mobile user
+                // Hide desktop note, show mobile note
+                if (desktopNote) desktopNote.style.display = 'none';
+                if (mobileNote) mobileNote.style.display = 'inline-block';
+                
+                // Scroll hint click handler for mobile
+                if (scrollHint) {
+                    scrollHint.onclick = function() {
+                        document.querySelector('.features').scrollIntoView({behavior: 'smooth'});
+                    };
                 }
             }
         });
