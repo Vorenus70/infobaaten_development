@@ -375,73 +375,77 @@ body {
 /* ========== RESPONSIVE - MOBILE ========== */
 @media (max-width: 768px) {
     .hero {
-        min-height: 70vh;
-        padding: 40px 16px 30px 16px;
+        min-height: 60vh;
+        padding: 30px 16px 20px 16px;
     }
     
     .hero-title {
-        font-size: 32px;
-        gap: 8px;
+        font-size: 28px;
+        gap: 6px;
     }
     
     .boat-icon {
-        font-size: 28px;
+        font-size: 24px;
     }
     
     .hero-subtitle {
-        font-size: 14px;
+        font-size: 13px;
         margin-bottom: 20px;
     }
     
     .cta-button {
-        padding: 12px 24px;
-        font-size: 14px;
-        gap: 8px;
+        padding: 10px 20px;
+        font-size: 13px;
+        gap: 6px;
     }
     
     /* Scroll hint - mobile */
     .scroll-hint {
-        bottom: 12px;
-        padding: 6px 12px;
-        gap: 6px;
+        bottom: 10px;
+        padding: 5px 10px;
+        gap: 5px;
     }
     
     .scroll-hint span {
-        font-size: 11px;
+        font-size: 10px;
     }
     
     .scroll-hint svg {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
     }
     
-    /* Mockup - mobile */
+    /* Mockup - mobile - COMPACT */
     .mockup-container {
         padding: 0 16px;
+        margin-top: 10px;
     }
     
     .mockup {
-        width: 240px;
-        padding: 10px;
-        border-radius: 32px;
+        width: 180px;
+        padding: 6px;
+        border-radius: 20px;
     }
     
     .mockup-screen {
-        border-radius: 24px;
+        border-radius: 14px;
     }
     
     .mockup-screenshot {
-        border-radius: 24px;
+        border-radius: 14px;
+        max-height: 280px;
+        width: auto;
+        margin: 0 auto;
     }
     
     /* Features - mobile */
     .features {
-        padding: 50px 16px;
+        padding: 40px 16px;
     }
     
     .section-title {
-        font-size: 28px;
-        margin-bottom: 30px;
+        font-size: 24px;
+        margin-bottom: 25px;
     }
     
     .features-grid {
@@ -449,59 +453,59 @@ body {
     }
     
     .feature-card {
-        padding: 20px 16px;
+        padding: 18px 14px;
     }
     
     .feature-icon {
-        font-size: 36px;
-        margin-bottom: 12px;
+        font-size: 32px;
+        margin-bottom: 10px;
     }
     
     .feature-card h3 {
-        font-size: 18px;
+        font-size: 16px;
     }
     
     .feature-card p {
-        font-size: 13px;
+        font-size: 12px;
     }
     
     /* How it works - mobile */
     .how-it-works {
-        padding: 50px 16px;
+        padding: 40px 16px;
     }
     
     .steps {
         flex-direction: column;
         align-items: center;
-        gap: 30px;
-        margin-top: 30px;
+        gap: 25px;
+        margin-top: 25px;
     }
     
     .step {
-        max-width: 220px;
+        max-width: 200px;
     }
     
     .step-number {
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
+        width: 45px;
+        height: 45px;
+        font-size: 22px;
     }
     
     .step p {
-        font-size: 14px;
+        font-size: 13px;
     }
     
     /* Footer - mobile */
     .footer {
-        padding: 30px 16px;
+        padding: 25px 16px;
     }
     
     .footer p {
-        font-size: 12px;
+        font-size: 11px;
     }
     
     .footer-contact {
-        font-size: 12px;
+        font-size: 11px;
     }
 }
 
@@ -518,9 +522,5 @@ body {
     
     .mockup:hover {
         transform: scale(1.02);
-    }
-    
-    .scroll-hint {
-        transition: all 0.3s ease;
     }
 }
