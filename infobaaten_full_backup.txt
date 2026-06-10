@@ -1,0 +1,1078 @@
+# INFOBÅTEN - COMPLETE BACKUP
+# Date: June 10, 2026
+# Version: Landing Page v2 (with animations) + App v2.0.4
+# Files: index.html | style.css | script.js | app/master.html
+
+============================================================
+=== FILE: index.html (Landing Page) ===
+============================================================
+
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>InfoBåten – Vannstand for norske innsjøer</title>
+    <meta name="description" content="Sanntids vannstand for Osensjøen og andre norske innsjøer. Få varsler når vannstanden endrer seg. Gratis app for båtfolk.">
+    <meta name="author" content="InfoBåten">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Animated background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Floating particles -->
+    <div class="particles"></div>
+
+    <!-- Main content -->
+    <main class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">INFOBÅTEN</h1>
+            <p class="hero-subtitle">Vannstand for norske innsjøer</p>
+            
+            <!-- Dynamic button – changes based on device -->
+            <a href="/infobaaten_development/app/" id="mainCta" class="cta-button">
+                <span id="ctaIcon">📱</span> <span id="ctaText">Instaler appen</span>
+            </a>
+            <p id="ctaNote" class="cta-note">
+                📱 Fungerer kun på mobil og nettbrett
+            </p>
+        </div>
+        
+        <!-- Floating mockup -->
+        <div class="mockup-container">
+            <div class="mockup">
+                <div class="mockup-screen">
+                    <img src="/infobaaten_development/app/images/infobaaten.png" 
+                         alt="InfoBåten app skjermbilde" 
+                         class="mockup-screenshot">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scroll hint - fixed position on screen -->
+    <div class="scroll-hint" id="scrollHint">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+        <span>Scroll ned</span>
+    </div>
+
+    <!-- Features section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Hva får du?</h2>
+            <!-- Desktop-only note about notifications -->
+            <div class="desktop-only-note" id="desktopNote">
+                🔔 For å motta varsler, installer appen på din mobil
+            </div>
+            <!-- Mobile-only note -->
+            <div class="mobile-only-note" id="mobileNote">
+                📱 Appen er optimalisert for mobil og nettbrett
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Sanntids vannstand</h3>
+                    <p>Oppdateres daglig med data fra GLB. Alltid nøyaktig.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Varslinger</h3>
+                    <p>Få beskjed når vannstanden endrer seg – aldri gå glipp av noe.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Flere innsjøer</h3>
+                    <p>Osensjøen er først ut. Flere norske innsjøer kommer!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📥</div>
+                    <h3>Last ned data</h3>
+                    <p>Eksporter vannstandshistorikk som CSV-fil.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Slik installerer du</h2>
+            <!-- Desktop-only note that this is for mobile -->
+            <div class="desktop-install-note" id="desktopInstallNote">
+                📱 Denne veiledningen gjelder kun for mobil og nettbrett
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <p>Åpne infobaaten.no i din nettleser</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <p>Trykk "Instaler appen" eller "Legg til på Hjem-skjermen"</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <p>Appen vises på hjem-skjermen – ferdig!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 InfoBåten – Vannstand for norske innsjøer</p>
+            <p class="footer-contact">📧 post@infobaaten.no</p>
+            <div class="footer-links">
+                <a href="https://www.facebook.com/infobaaten" target="_blank">Facebook</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Device detection – runs after page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detect mobile/tablet vs desktop
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet|PlayBook|Silk/i.test(navigator.userAgent) || 
+                             (window.innerWidth <= 1024);
+            
+            const ctaIcon = document.getElementById('ctaIcon');
+            const ctaText = document.getElementById('ctaText');
+            const ctaNote = document.getElementById('ctaNote');
+            const scrollHint = document.getElementById('scrollHint');
+            const desktopNote = document.getElementById('desktopNote');
+            const mobileNote = document.getElementById('mobileNote');
+            const desktopInstallNote = document.getElementById('desktopInstallNote');
+            
+            if (!isMobile) {
+                // Desktop user
+                if (ctaIcon) ctaIcon.textContent = '🖥️';
+                if (ctaText) ctaText.textContent = 'Gå til nettversjon';
+                if (ctaNote) {
+                    ctaNote.textContent = '💻 Åpnes i nettleseren – ingen installasjon nødvendig';
+                    ctaNote.style.opacity = '0.7';
+                }
+                // Hide scroll hint on desktop
+                if (scrollHint) scrollHint.style.display = 'none';
+                // Show desktop notes, hide mobile notes
+                if (desktopNote) desktopNote.style.display = 'inline-block';
+                if (mobileNote) mobileNote.style.display = 'none';
+                if (desktopInstallNote) desktopInstallNote.style.display = 'inline-block';
+            } else {
+                // Mobile user
+                // Hide desktop notes, show mobile note
+                if (desktopNote) desktopNote.style.display = 'none';
+                if (mobileNote) mobileNote.style.display = 'inline-block';
+                if (desktopInstallNote) desktopInstallNote.style.display = 'none';
+                
+                function isBottomReached() {
+                    const scrollPosition = window.scrollY + window.innerHeight;
+                    const pageHeight = document.body.scrollHeight;
+                    return scrollPosition >= pageHeight - 50;
+                }
+                
+                function updateScrollHint() {
+                    if (scrollHint) {
+                        if (isBottomReached()) {
+                            scrollHint.style.display = 'none';
+                        } else {
+                            scrollHint.style.display = 'flex';
+                        }
+                    }
+                }
+                
+                // Click handler - scroll to next section
+                if (scrollHint) {
+                    scrollHint.onclick = function() {
+                        const sections = [
+                            document.querySelector('.features'),
+                            document.querySelector('.how-it-works'),
+                            document.querySelector('.footer')
+                        ];
+                        
+                        let nextSection = null;
+                        const currentScroll = window.scrollY;
+                        
+                        for (let i = 0; i < sections.length; i++) {
+                            const section = sections[i];
+                            if (section) {
+                                const sectionTop = section.offsetTop;
+                                if (sectionTop > currentScroll + 50) {
+                                    nextSection = section;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (nextSection) {
+                            nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        } else {
+                            window.scrollTo({
+                                top: document.body.scrollHeight,
+                                behavior: 'smooth'
+                            });
+                        }
+                        
+                        setTimeout(updateScrollHint, 600);
+                        setTimeout(updateScrollHint, 1000);
+                    };
+                }
+                
+                window.addEventListener('scroll', updateScrollHint);
+                updateScrollHint();
+            }
+        });
+    </script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
+============================================================
+=== FILE: style.css (Landing Page Styles) ===
+============================================================
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0a1a2a;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ========== ANIMATED BACKGROUND ========== */
+.animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background: linear-gradient(135deg, #0a2a3a 0%, #0b5e7e 50%, #1b8cae 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 10s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Floating particles */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ========== HERO SECTION ========== */
+.hero {
+    min-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px 40px 20px;
+    position: relative;
+}
+
+.hero-content {
+    z-index: 2;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: clamp(48px, 10vw, 120px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff, #b8e1fc);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    animation: titleGlow 3s ease-in-out infinite, textGradient 5s ease infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes textGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes titleGlow {
+    0% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    50% { text-shadow: 0 0 40px rgba(255,255,255,0.4); }
+    100% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+}
+
+/* Typing animation - TIGHT spacing */
+.hero-subtitle {
+    font-size: clamp(16px, 4vw, 24px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+    line-height: 1.3;
+    display: block;
+    height: 38px;
+    margin-bottom: 12px;
+}
+
+/* Inner span for the actual text */
+.typing-text {
+    display: inline-block;
+}
+
+/* Blinking cursor */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background-color: rgba(255,255,255,0.75);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blinkCursor 0.75s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #ffffff, #e0e8f0);
+    color: #0b5e7e;
+    padding: 16px 40px;
+    border-radius: 60px;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255,255,255,0.5);
+    background: white;
+}
+
+.cta-note {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 12px;
+}
+
+/* Push mockup down */
+.mockup-container {
+    margin-top: 40px;
+}
+
+/* ========== SCROLL HINT ========== */
+.scroll-hint {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.scroll-hint span {
+    color: #0b5e7e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.scroll-hint svg {
+    width: 16px;
+    height: 16px;
+    stroke: #0b5e7e;
+    stroke-width: 2.5;
+    fill: none;
+}
+
+.scroll-hint:hover {
+    background: white;
+    transform: translateX(-50%) scale(1.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ========== MOCKUP ========== */
+.mockup-container {
+    animation: floatMockup 4s ease-in-out infinite;
+    padding: 0 20px;
+}
+
+@keyframes floatMockup {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+.mockup {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+    margin: 0 auto;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+}
+
+.mockup-screen {
+    background: transparent;
+    border-radius: 30px;
+    overflow: hidden;
+    padding: 0;
+}
+
+.mockup-screenshot {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 30px;
+}
+
+/* ========== FEATURES SECTION ========== */
+.features {
+    padding: 80px 20px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(5px);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, #fff, #b8e1fc);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* Desktop-only note */
+.desktop-only-note {
+    text-align: center;
+    font-size: 14px;
+    color: #ffd966;
+    margin-bottom: 40px;
+    padding: 10px 24px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 40px;
+    display: none;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(255,217,102,0.4);
+    font-weight: 500;
+}
+
+/* Mobile-only note */
+.mobile-only-note {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 40px;
+    padding: 10px 24px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 40px;
+    display: none;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Desktop install note */
+.desktop-install-note {
+    text-align: center;
+    font-size: 13px;
+    color: #ffd966;
+    margin-bottom: 20px;
+    padding: 6px 16px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 30px;
+    display: none;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+/* Glowing cards effect */
+.feature-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.feature-card.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #1b8cae, #0b5e7e, #1b8cae, #0b5e7e);
+    background-size: 200% 200%;
+    border-radius: 26px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    animation: gradientShift 2s ease infinite;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255,255,255,0.15);
+}
+
+.feature-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.feature-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    font-size: 14px;
+    opacity: 0.8;
+    line-height: 1.5;
+}
+
+/* ========== HOW IT WORKS ========== */
+.how-it-works {
+    padding: 80px 20px;
+    background: rgba(0,0,0,0.2);
+}
+
+.steps {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.step {
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.step.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #1b8cae, #0b5e7e);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 auto 15px;
+    box-shadow: 0 0 20px rgba(27,140,174,0.5);
+}
+
+.step p {
+    font-size: 16px;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    padding: 40px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer p {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-bottom: 10px;
+}
+
+.footer-contact {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+    margin: 0 10px;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+}
+
+/* ========== ANIMATED BOAT ========== */
+.sailing-boat {
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', system-ui, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ========== DESKTOP (default) ========== */
+.mockup {
+    width: 220px;
+}
+
+/* ========== RESPONSIVE - MOBILE ========== */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 75vh;
+        padding: 40px 16px 30px 16px;
+    }
+    
+    .hero-title {
+        font-size: 32px;
+        gap: 8px;
+    }
+    
+    .hero-subtitle {
+        height: 32px;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .cta-button {
+        padding: 12px 24px;
+        font-size: 14px;
+        gap: 8px;
+    }
+    
+    .cta-note {
+        font-size: 10px;
+    }
+    
+    /* Scroll hint - mobile */
+    .scroll-hint {
+        bottom: 80px;
+        padding: 6px 12px;
+        gap: 6px;
+        animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(8px); }
+    }
+    
+    .scroll-hint span {
+        font-size: 11px;
+    }
+    
+    .scroll-hint svg {
+        width: 12px;
+        height: 12px;
+    }
+    
+    /* Mockup - mobile */
+    .mockup {
+        width: 260px;
+        padding: 10px;
+        border-radius: 32px;
+    }
+    
+    .mockup-screen {
+        border-radius: 22px;
+    }
+    
+    .mockup-screenshot {
+        border-radius: 22px;
+        max-height: 420px;
+    }
+    
+    /* Features - mobile */
+    .features {
+        padding: 50px 16px;
+    }
+    
+    .section-title {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+    
+    .mobile-only-note {
+        font-size: 12px;
+        margin-bottom: 30px;
+        padding: 6px 16px;
+    }
+    
+    .features-grid {
+        gap: 16px;
+    }
+    
+    .feature-card {
+        padding: 20px 16px;
+    }
+    
+    .feature-icon {
+        font-size: 36px;
+        margin-bottom: 12px;
+    }
+    
+    .feature-card h3 {
+        font-size: 18px;
+    }
+    
+    .feature-card p {
+        font-size: 13px;
+    }
+    
+    /* How it works - mobile */
+    .how-it-works {
+        padding: 50px 16px;
+    }
+    
+    .steps {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        margin-top: 30px;
+    }
+    
+    .step {
+        max-width: 220px;
+    }
+    
+    .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    .step p {
+        font-size: 14px;
+    }
+    
+    /* Footer - mobile */
+    .footer {
+        padding: 30px 16px;
+    }
+    
+    .footer p {
+        font-size: 12px;
+    }
+    
+    .footer-contact {
+        font-size: 12px;
+    }
+}
+
+============================================================
+=== FILE: script.js (Landing Page Scripts) ===
+============================================================
+
+// ========== PARTICLES GENERATION ==========
+function createParticles() {
+    const particlesContainer = document.querySelector('.particles');
+    if (!particlesContainer) return;
+    
+    particlesContainer.innerHTML = '';
+    const particleCount = Math.min(50, Math.max(30, Math.floor(window.innerWidth / 20)));
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = Math.random() * 4 + 2 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.backgroundColor = `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})`;
+        particle.style.borderRadius = '50%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animation = `floatParticle ${Math.random() * 20 + 15}s linear infinite`;
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.pointerEvents = 'none';
+        particlesContainer.appendChild(particle);
+    }
+}
+
+// Add keyframe animation for particles
+const particleStyle = document.createElement('style');
+particleStyle.textContent = `
+    @keyframes floatParticle {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+    }
+`;
+document.head.appendChild(particleStyle);
+
+// ========== 3D TILT EFFECT FOR MOCKUP ==========
+function initTiltEffect() {
+    const mockup = document.querySelector('.mockup');
+    if (!mockup) return;
+    
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouch) return;
+    
+    mockup.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = (y - centerY) / 25;
+        const rotateY = (centerX - x) / 25;
+        
+        this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+    });
+    
+    mockup.addEventListener('mouseleave', function() {
+        this.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+        this.style.transition = 'transform 0.5s ease';
+    });
+}
+
+// ========== TYPING ANIMATION (NO LAYOUT SHIFT) ==========
+function initTypingAnimation() {
+    const subtitleElement = document.querySelector('.hero-subtitle');
+    if (!subtitleElement) return;
+    
+    const originalText = subtitleElement.textContent;
+    
+    // Clear the subtitle element
+    subtitleElement.innerHTML = '';
+    
+    // Create span for text
+    const textSpan = document.createElement('span');
+    textSpan.className = 'typing-text';
+    subtitleElement.appendChild(textSpan);
+    
+    // Create cursor element
+    const cursorSpan = document.createElement('span');
+    cursorSpan.className = 'typing-cursor';
+    subtitleElement.appendChild(cursorSpan);
+    
+    let i = 0;
+    function typeNext() {
+        if (i < originalText.length) {
+            textSpan.textContent += originalText.charAt(i);
+            i++;
+            setTimeout(typeNext, 50);
+        } else {
+            // Remove cursor when done
+            if (cursorSpan) cursorSpan.style.display = 'none';
+        }
+    }
+    
+    typeNext();
+}
+
+// ========== WATER RIPPLE EFFECT ==========
+function initWaterRipple() {
+    const ctaButton = document.querySelector('.cta-button');
+    if (!ctaButton) return;
+    
+    ctaButton.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.style.position = 'absolute';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.style.width = '0px';
+        ripple.style.height = '0px';
+        ripple.style.borderRadius = '50%';
+        ripple.style.backgroundColor = 'rgba(11,94,126,0.3)';
+        ripple.style.transform = 'translate(-50%, -50%)';
+        ripple.style.transition = 'all 0.5s ease-out';
+        ripple.style.pointerEvents = 'none';
+        
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.style.width = '300px';
+            ripple.style.height = '300px';
+            ripple.style.opacity = '0';
+        }, 10);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 500);
+    });
+}
+
+// ========== ANIMATED BOAT (HIGHER UP) ==========
+function initAnimatedBoat() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    
+    if (document.querySelector('.sailing-boat')) return;
+    
+    const boat = document.createElement('div');
+    boat.className = 'sailing-boat';
+    boat.innerHTML = '🚤';
+    boat.style.position = 'absolute';
+    boat.style.bottom = '35%';
+    boat.style.right = '-80px';
+    boat.style.fontSize = '56px';
+    boat.style.zIndex = '5';
+    boat.style.animation = 'sailAcross 14s linear infinite';
+    boat.style.pointerEvents = 'none';
+    boat.style.filter = 'drop-shadow(0 5px 10px rgba(0,0,0,0.2))';
+    
+    hero.appendChild(boat);
+    
+    const boatStyle = document.createElement('style');
+    boatStyle.textContent = `
+        @keyframes sailAcross {
+            0% { right: -80px; transform: translateY(0px) rotate(0deg); }
+            15% { transform: translateY(-12px) rotate(4deg); }
+            30% { transform: translateY(6px) rotate(-3deg); }
+            45% { transform: translateY(-8px) rotate(3deg); }
+            60% { transform: translateY(4px) rotate(-2deg); }
+            75% { transform: translateY(-6px) rotate(2deg); }
+            100% { right: calc(100% + 80px); transform: translateY(0px) rotate(0deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .sailing-boat {
+                animation: sailAcross 10s linear infinite;
+                font-size: 40px;
+            }
+            @keyframes sailAcross {
+                0% { right: -60px; transform: translateY(0px) rotate(0deg); }
+                20% { transform: translateY(-8px) rotate(4deg); }
+                40% { transform: translateY(5px) rotate(-3deg); }
+                60% { transform: translateY(-5px) rotate(3deg); }
+                80% { transform: translateY(4px) rotate(-2deg); }
+                100% { right: calc(100% + 60px); transform: translateY(0px) rotate(0deg); }
+            }
+        }
+    `;
+    document.head.appendChild(boatStyle);
+}
+
+// ========== SCROLL REVEAL ANIMATION ==========
+function initScrollReveal() {
+    const revealElements = document.querySelectorAll('.feature-card, .step');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    
+    revealElements.forEach(el => observer.observe(el));
+}
+
+// ========== INITIALIZE EVERYTHING ==========
+document.addEventListener('DOMContentLoaded', function() {
+    createParticles();
+    initTiltEffect();
+    initTypingAnimation();
+    initWaterRipple();
+    initAnimatedBoat();
+    initScrollReveal();
+    
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(createParticles, 250);
+    });
+});
+
+============================================================
+=== FILE: app/master.html (Water Level Dashboard App) ===
+============================================================
+
+[PASTE
