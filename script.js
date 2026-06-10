@@ -60,26 +60,57 @@ function initTiltEffect() {
     });
 }
 
-// ========== TYPING ANIMATION ==========
+// ========== TYPING ANIMATION (FIXED - no button pushing) ==========
 function initTypingAnimation() {
     const subtitleElement = document.querySelector('.hero-subtitle');
     if (!subtitleElement) return;
     
     const originalText = subtitleElement.textContent;
+    
+    // Clear the text
     subtitleElement.textContent = '';
+    
+    // Create a span for the actual text (to keep layout stable)
+    const textSpan = document.createElement('span');
+    textSpan.style.display = 'inline-block';
+    textSpan.style.textAlign = 'center';
+    subtitleElement.appendChild(textSpan);
+    
+    // Add cursor span
+    const cursorSpan = document.createElement('span');
+    cursorSpan.textContent = '|';
+    cursorSpan.style.opacity = '1';
+    cursorSpan.style.animation = 'blinkCursor 0.75s step-end infinite';
+    cursorSpan.style.marginLeft = '2px';
+    subtitleElement.appendChild(cursorSpan);
+    
+    // Add cursor blink animation to head if not exists
+    if (!document.querySelector('#cursorStyle')) {
+        const cursorStyle = document.createElement('style');
+        cursorStyle.id = 'cursorStyle';
+        cursorStyle.textContent = `
+            @keyframes blinkCursor {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(cursorStyle);
+    }
     
     let i = 0;
     function typeNext() {
         if (i < originalText.length) {
-            subtitleElement.textContent += originalText.charAt(i);
+            textSpan.textContent += originalText.charAt(i);
             i++;
             setTimeout(typeNext, 50);
+        } else {
+            // Remove cursor when done
+            if (cursorSpan) cursorSpan.style.display = 'none';
         }
     }
     
     typeNext();
 }
-
 // ========== WATER RIPPLE EFFECT ==========
 function initWaterRipple() {
     const ctaButton = document.querySelector('.cta-button');
