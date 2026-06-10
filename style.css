@@ -90,15 +90,37 @@ body {
     100% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
 }
 
-/* Typing animation - NATURAL spacing */
+/* Typing animation - TIGHT spacing */
 .hero-subtitle {
     font-size: clamp(16px, 4vw, 24px);
     font-weight: 300;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 20px;
     text-align: center;
-    display: block;
     line-height: 1.3;
+    display: block;
+    height: 38px;
+    margin-bottom: 12px;
+}
+
+/* Inner span for the actual text */
+.typing-text {
+    display: inline-block;
+}
+
+/* Blinking cursor */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background-color: rgba(255,255,255,0.75);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blinkCursor 0.75s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 /* CTA Button */
@@ -451,8 +473,9 @@ body {
     }
     
     .hero-subtitle {
+        height: 32px;
         font-size: 14px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     
     .cta-button {
