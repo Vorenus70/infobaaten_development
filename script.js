@@ -39,14 +39,18 @@ function initTiltEffect() {
     const mockup = document.querySelector('.mockup');
     if (!mockup) return;
     
+    // Only apply tilt on desktop (mouse devices)
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouch) return;
+    
     mockup.addEventListener('mousemove', function(e) {
         const rect = this.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 20;
-        const rotateY = (centerX - x) / 20;
+        const rotateX = (y - centerY) / 25;
+        const rotateY = (centerX - x) / 25;
         
         this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
     });
@@ -57,25 +61,35 @@ function initTiltEffect() {
     });
 }
 
-// ========== TYPING ANIMATION ==========
+// ========== TYPING ANIMATION (FIXED - no button jumping) ==========
 function initTypingAnimation() {
     const subtitleElement = document.querySelector('.hero-subtitle');
+    const heroContent = document.querySelector('.hero-content');
     if (!subtitleElement) return;
     
+    // Store original text
     const originalText = subtitleElement.textContent;
+    
+    // Clear and set fixed height container
     subtitleElement.textContent = '';
     subtitleElement.style.opacity = '1';
+    subtitleElement.style.minHeight = '60px'; // Fixed height to prevent jumping
+    subtitleElement.style.display = 'block';
     
     let i = 0;
     function typeNext() {
         if (i < originalText.length) {
             subtitleElement.textContent += originalText.charAt(i);
             i++;
-            setTimeout(typeNext, 80);
+            setTimeout(typeNext, 60);
+        } else {
+            // Remove cursor blink when done
+            subtitleElement.style.borderRight = 'none';
         }
     }
     
-    typeNext();
+    // Start typing after a short delay
+    setTimeout(typeNext, 300);
 }
 
 // ========== WATER RIPPLE EFFECT ==========
@@ -95,7 +109,7 @@ function initWaterRipple() {
         ripple.style.width = '0px';
         ripple.style.height = '0px';
         ripple.style.borderRadius = '50%';
-        ripple.style.backgroundColor = 'rgba(255,255,255,0.5)';
+        ripple.style.backgroundColor = 'rgba(11,94,126,0.3)';
         ripple.style.transform = 'translate(-50%, -50%)';
         ripple.style.transition = 'all 0.5s ease-out';
         ripple.style.pointerEvents = 'none';
@@ -116,10 +130,10 @@ function initWaterRipple() {
     });
 }
 
-// ========== ANIMATED BOAT ==========
+// ========== ANIMATED BOAT (FIXED - goes right direction, bobs properly) ==========
 function initAnimatedBoat() {
-    const heroContent = document.querySelector('.hero-content');
-    if (!heroContent) return;
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
     
     // Check if boat already exists
     if (document.querySelector('.sailing-boat')) return;
@@ -128,39 +142,60 @@ function initAnimatedBoat() {
     boat.className = 'sailing-boat';
     boat.innerHTML = '🚤';
     boat.style.position = 'absolute';
-    boat.style.bottom = '20%';
-    boat.style.left = '-60px';
-    boat.style.fontSize = '48px';
+    boat.style.bottom = '15%';
+    boat.style.left = '-80px';
+    boat.style.fontSize = '56px';
     boat.style.zIndex = '5';
-    boat.style.animation = 'sailAcross 12s linear infinite';
+    boat.style.animation = 'sailAcross 14s linear infinite';
     boat.style.pointerEvents = 'none';
-    boat.style.filter = 'drop-shadow(0 5px 10px rgba(0,0,0,0.3))';
+    boat.style.filter = 'drop-shadow(0 5px 10px rgba(0,0,0,0.2))';
     
-    heroContent.appendChild(boat);
+    hero.appendChild(boat);
     
     // Add CSS for boat animation
     const boatStyle = document.createElement('style');
     boatStyle.textContent = `
         @keyframes sailAcross {
             0% {
-                left: -60px;
+                left: -80px;
                 transform: translateY(0px) rotate(0deg);
             }
-            20% {
-                transform: translateY(-10px) rotate(-5deg);
+            15% {
+                transform: translateY(-12px) rotate(-4deg);
             }
-            40% {
-                transform: translateY(5px) rotate(3deg);
+            30% {
+                transform: translateY(6px) rotate(3deg);
+            }
+            45% {
+                transform: translateY(-8px) rotate(-3deg);
             }
             60% {
-                transform: translateY(-5px) rotate(-2deg);
+                transform: translateY(4px) rotate(2deg);
             }
-            80% {
-                transform: translateY(8px) rotate(4deg);
+            75% {
+                transform: translateY(-6px) rotate(-2deg);
             }
             100% {
-                left: calc(100% + 60px);
+                left: calc(100% + 80px);
                 transform: translateY(0px) rotate(0deg);
+            }
+        }
+        
+        /* Mobile adjustment - slightly faster */
+        @media (max-width: 768px) {
+            .sailing-boat {
+                animation: sailAcross 10s linear infinite;
+                font-size: 40px;
+                bottom: 10%;
+            }
+            
+            @keyframes sailAcross {
+                0% { left: -60px; transform: translateY(0px) rotate(0deg); }
+                20% { transform: translateY(-8px) rotate(-4deg); }
+                40% { transform: translateY(5px) rotate(3deg); }
+                60% { transform: translateY(-5px) rotate(-3deg); }
+                80% { transform: translateY(4px) rotate(2deg); }
+                100% { left: calc(100% + 60px); transform: translateY(0px) rotate(0deg); }
             }
         }
     `;
@@ -188,14 +223,17 @@ function initSmoothScrollHint() {
     const scrollHint = document.getElementById('scrollHint');
     if (!scrollHint) return;
     
-    // Override the existing click handler to add ripple effect
     const sections = [
         document.querySelector('.features'),
         document.querySelector('.how-it-works'),
         document.querySelector('.footer')
     ];
     
-    scrollHint.addEventListener('click', function(e) {
+    // Remove existing listeners and add new one
+    const newScrollHint = scrollHint.cloneNode(true);
+    scrollHint.parentNode.replaceChild(newScrollHint, scrollHint);
+    
+    newScrollHint.addEventListener('click', function(e) {
         let nextSection = null;
         const currentScroll = window.scrollY;
         
@@ -212,7 +250,7 @@ function initSmoothScrollHint() {
         
         if (nextSection) {
             nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
+        } else if (!isBottomReached()) {
             window.scrollTo({
                 top: document.body.scrollHeight,
                 behavior: 'smooth'
@@ -232,9 +270,9 @@ function initSmoothScrollHint() {
         ripple.style.transition = 'all 0.4s ease-out';
         ripple.style.pointerEvents = 'none';
         
-        scrollHint.style.position = 'relative';
-        scrollHint.style.overflow = 'hidden';
-        scrollHint.appendChild(ripple);
+        newScrollHint.style.position = 'relative';
+        newScrollHint.style.overflow = 'hidden';
+        newScrollHint.appendChild(ripple);
         
         setTimeout(() => {
             ripple.style.width = '200px';
@@ -246,6 +284,12 @@ function initSmoothScrollHint() {
             ripple.remove();
         }, 500);
     });
+    
+    function isBottomReached() {
+        const scrollPosition = window.scrollY + window.innerHeight;
+        const pageHeight = document.body.scrollHeight;
+        return scrollPosition >= pageHeight - 50;
+    }
 }
 
 // ========== GLOWING BORDER EFFECT ON FEATURE CARDS ==========
