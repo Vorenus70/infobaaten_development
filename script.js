@@ -61,27 +61,26 @@ function initTiltEffect() {
     });
 }
 
-// ========== TYPING ANIMATION (FIXED - no button jumping) ==========
+// ========== TYPING ANIMATION (FIXED - no huge cursor, tighter spacing) ==========
 function initTypingAnimation() {
     const subtitleElement = document.querySelector('.hero-subtitle');
-    const heroContent = document.querySelector('.hero-content');
     if (!subtitleElement) return;
     
     // Store original text
     const originalText = subtitleElement.textContent;
     
-    // Clear and set fixed height container
+    // Clear and set properties
     subtitleElement.textContent = '';
     subtitleElement.style.opacity = '1';
-    subtitleElement.style.minHeight = '60px'; // Fixed height to prevent jumping
-    subtitleElement.style.display = 'block';
+    subtitleElement.style.display = 'inline-block';
+    subtitleElement.style.borderRight = '2px solid rgba(255,255,255,0.75)';
     
     let i = 0;
     function typeNext() {
         if (i < originalText.length) {
             subtitleElement.textContent += originalText.charAt(i);
             i++;
-            setTimeout(typeNext, 60);
+            setTimeout(typeNext, 50);
         } else {
             // Remove cursor blink when done
             subtitleElement.style.borderRight = 'none';
@@ -130,7 +129,7 @@ function initWaterRipple() {
     });
 }
 
-// ========== ANIMATED BOAT (FIXED - goes right direction, bobs properly) ==========
+// ========== ANIMATED BOAT (FIXED - goes RIGHT to LEFT) ==========
 function initAnimatedBoat() {
     const hero = document.querySelector('.hero');
     if (!hero) return;
@@ -143,7 +142,7 @@ function initAnimatedBoat() {
     boat.innerHTML = '🚤';
     boat.style.position = 'absolute';
     boat.style.bottom = '15%';
-    boat.style.left = '-80px';
+    boat.style.right = '-80px';  // Start from RIGHT side
     boat.style.fontSize = '56px';
     boat.style.zIndex = '5';
     boat.style.animation = 'sailAcross 14s linear infinite';
@@ -152,36 +151,36 @@ function initAnimatedBoat() {
     
     hero.appendChild(boat);
     
-    // Add CSS for boat animation
+    // Add CSS for boat animation - moving LEFT
     const boatStyle = document.createElement('style');
     boatStyle.textContent = `
         @keyframes sailAcross {
             0% {
-                left: -80px;
+                right: -80px;
                 transform: translateY(0px) rotate(0deg);
             }
             15% {
-                transform: translateY(-12px) rotate(-4deg);
+                transform: translateY(-12px) rotate(4deg);
             }
             30% {
-                transform: translateY(6px) rotate(3deg);
+                transform: translateY(6px) rotate(-3deg);
             }
             45% {
-                transform: translateY(-8px) rotate(-3deg);
+                transform: translateY(-8px) rotate(3deg);
             }
             60% {
-                transform: translateY(4px) rotate(2deg);
+                transform: translateY(4px) rotate(-2deg);
             }
             75% {
-                transform: translateY(-6px) rotate(-2deg);
+                transform: translateY(-6px) rotate(2deg);
             }
             100% {
-                left: calc(100% + 80px);
+                right: calc(100% + 80px);
                 transform: translateY(0px) rotate(0deg);
             }
         }
         
-        /* Mobile adjustment - slightly faster */
+        /* Mobile adjustment */
         @media (max-width: 768px) {
             .sailing-boat {
                 animation: sailAcross 10s linear infinite;
@@ -190,12 +189,12 @@ function initAnimatedBoat() {
             }
             
             @keyframes sailAcross {
-                0% { left: -60px; transform: translateY(0px) rotate(0deg); }
-                20% { transform: translateY(-8px) rotate(-4deg); }
-                40% { transform: translateY(5px) rotate(3deg); }
-                60% { transform: translateY(-5px) rotate(-3deg); }
-                80% { transform: translateY(4px) rotate(2deg); }
-                100% { left: calc(100% + 60px); transform: translateY(0px) rotate(0deg); }
+                0% { right: -60px; transform: translateY(0px) rotate(0deg); }
+                20% { transform: translateY(-8px) rotate(4deg); }
+                40% { transform: translateY(5px) rotate(-3deg); }
+                60% { transform: translateY(-5px) rotate(3deg); }
+                80% { transform: translateY(4px) rotate(-2deg); }
+                100% { right: calc(100% + 60px); transform: translateY(0px) rotate(0deg); }
             }
         }
     `;
