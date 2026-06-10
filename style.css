@@ -648,3 +648,104 @@ body {
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+/* ========== FIXED TYPING ANIMATION - No button jumping ========== */
+.hero-subtitle {
+    border-right: 2px solid rgba(255,255,255,0.75);
+    overflow: hidden;
+    display: inline-block;
+    min-height: 60px;
+    line-height: 1.4;
+    animation: blinkCursor 0.75s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { border-color: rgba(255,255,255,0.75); }
+    50% { border-color: transparent; }
+}
+
+/* Mobile fix for typing animation */
+@media (max-width: 768px) {
+    .hero-subtitle {
+        white-space: normal;
+        min-height: 50px;
+    }
+}
+
+/* ========== FIXED BOAT STYLES ========== */
+.sailing-boat {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Ensure boat shows properly on all browsers */
+@supports (font-variation-settings: normal) {
+    .sailing-boat {
+        font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+    }
+}
+
+/* ========== 3D TILT EFFECT ========== */
+.mockup {
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+}
+
+/* ========== GLOWING CARDS EFFECT ========== */
+.feature-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #1b8cae, #0b5e7e, #1b8cae, #0b5e7e);
+    background-size: 200% 200%;
+    border-radius: 26px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    animation: gradientShift 2s ease infinite;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255,255,255,0.15);
+}
+
+/* ========== BUTTON RIPPLE EFFECT ========== */
+.cta-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* ========== ENHANCED SCROLL HINT ========== */
+.scroll-hint {
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.scroll-hint:hover {
+    background: white;
+    transform: translateX(-50%) scale(1.08);
+}
+
+/* ========== PULSING GLOW ON TITLE ========== */
+.hero-title {
+    animation: titleGlow 3s ease-in-out infinite, textGradient 5s ease infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes textGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
