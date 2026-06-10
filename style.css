@@ -85,7 +85,7 @@ body {
 
 .hero-content {
     z-index: 2;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .hero-title {
@@ -102,6 +102,20 @@ body {
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
+    animation: titleGlow 3s ease-in-out infinite, textGradient 5s ease infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes textGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes titleGlow {
+    0% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    50% { text-shadow: 0 0 40px rgba(255,255,255,0.4); }
+    100% { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
 }
 
 .boat-icon {
@@ -115,11 +129,22 @@ body {
     50% { transform: rotate(8deg); }
 }
 
+/* Typing animation - FIXED */
 .hero-subtitle {
     font-size: clamp(16px, 4vw, 24px);
     font-weight: 300;
     color: rgba(255,255,255,0.9);
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    display: inline-block;
+    border-right: 2px solid rgba(255,255,255,0.75);
+    overflow: hidden;
+    line-height: 1.3;
+    animation: blinkCursor 0.75s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { border-color: rgba(255,255,255,0.75); }
+    50% { border-color: transparent; }
 }
 
 /* CTA Button */
@@ -136,6 +161,8 @@ body {
     text-decoration: none;
     transition: all 0.3s ease;
     box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
 }
 
 .cta-button:hover {
@@ -162,7 +189,7 @@ body {
     padding: 8px 16px;
     border: 1px solid rgba(0,0,0,0.1);
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .scroll-hint span {
@@ -181,7 +208,7 @@ body {
 
 .scroll-hint:hover {
     background: white;
-    transform: translateX(-50%) scale(1.05);
+    transform: translateX(-50%) scale(1.08);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -205,6 +232,8 @@ body {
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
     border: 1px solid rgba(255,255,255,0.2);
     margin: 0 auto;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
 }
 
 .mockup-screen {
@@ -298,6 +327,7 @@ body {
     gap: 30px;
 }
 
+/* Glowing cards effect */
 .feature-card {
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(10px);
@@ -306,6 +336,28 @@ body {
     text-align: center;
     transition: transform 0.3s ease;
     border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #1b8cae, #0b5e7e, #1b8cae, #0b5e7e);
+    background-size: 200% 200%;
+    border-radius: 26px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+    animation: gradientShift 2s ease infinite;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
 }
 
 .feature-card:hover {
@@ -348,6 +400,14 @@ body {
     text-align: center;
     flex: 1;
     min-width: 150px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.step.revealed {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .step-number {
@@ -401,15 +461,21 @@ body {
 }
 
 /* ========== SCROLL REVEAL ========== */
-.feature-card, .step {
+.feature-card {
     opacity: 0;
     transform: translateY(30px);
     transition: all 0.6s ease;
 }
 
-.feature-card.revealed, .step.revealed {
+.feature-card.revealed {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* ========== ANIMATED BOAT ========== */
+.sailing-boat {
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', system-ui, sans-serif;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
 }
 
 /* ========== DESKTOP (default) ========== */
@@ -435,7 +501,14 @@ body {
     
     .hero-subtitle {
         font-size: 14px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+        white-space: normal;
+        border-right: none;
+        animation: none;
+    }
+    
+    .hero-content {
+        margin-bottom: 15px;
     }
     
     .cta-button {
@@ -557,195 +630,4 @@ body {
     .footer-contact {
         font-size: 12px;
     }
-}
-/* ========== 3D TILT EFFECT ========== */
-.mockup {
-    transition: transform 0.1s ease-out;
-    will-change: transform;
-}
-
-/* ========== GLOWING CARDS EFFECT ========== */
-.feature-card {
-    position: relative;
-    overflow: hidden;
-}
-
-.feature-card::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #1b8cae, #0b5e7e, #1b8cae, #0b5e7e);
-    background-size: 200% 200%;
-    border-radius: 26px;
-    opacity: 0;
-    z-index: -1;
-    transition: opacity 0.3s ease;
-    animation: gradientShift 2s ease infinite;
-}
-
-.feature-card:hover::before {
-    opacity: 1;
-}
-
-.feature-card:hover {
-    transform: translateY(-10px);
-    background: rgba(255,255,255,0.15);
-}
-
-/* ========== TYPING ANIMATION CURSOR ========== */
-.hero-subtitle {
-    border-right: 2px solid rgba(255,255,255,0.75);
-    white-space: nowrap;
-    overflow: hidden;
-    display: inline-block;
-    animation: blinkCursor 0.75s step-end infinite;
-}
-
-@keyframes blinkCursor {
-    0%, 100% { border-color: rgba(255,255,255,0.75); }
-    50% { border-color: transparent; }
-}
-
-/* Mobile fix for typing animation */
-@media (max-width: 768px) {
-    .hero-subtitle {
-        white-space: normal;
-        border-right: none;
-        animation: none;
-    }
-}
-
-/* ========== BUTTON RIPPLE EFFECT ========== */
-.cta-button {
-    position: relative;
-    overflow: hidden;
-}
-
-/* ========== ANIMATED BOAT - already added via JS ========== */
-
-/* ========== ENHANCED SCROLL HINT ========== */
-.scroll-hint {
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.scroll-hint:hover {
-    background: white;
-    transform: translateX(-50%) scale(1.08);
-}
-
-/* ========== PULSING GLOW ON TITLE ========== */
-.hero-title {
-    animation: titleGlow 3s ease-in-out infinite, textGradient 5s ease infinite;
-    background-size: 200% 200%;
-}
-
-@keyframes textGradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-/* ========== FIXED TYPING ANIMATION - No button jumping ========== */
-.hero-subtitle {
-    border-right: 2px solid rgba(255,255,255,0.75);
-    overflow: hidden;
-    display: inline-block;
-    min-height: 60px;
-    line-height: 1.4;
-    animation: blinkCursor 0.75s step-end infinite;
-}
-
-@keyframes blinkCursor {
-    0%, 100% { border-color: rgba(255,255,255,0.75); }
-    50% { border-color: transparent; }
-}
-
-/* Mobile fix for typing animation */
-@media (max-width: 768px) {
-    .hero-subtitle {
-        white-space: normal;
-        min-height: 50px;
-    }
-}
-
-/* ========== FIXED BOAT STYLES ========== */
-.sailing-boat {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-}
-
-/* Ensure boat shows properly on all browsers */
-@supports (font-variation-settings: normal) {
-    .sailing-boat {
-        font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
-    }
-}
-
-/* ========== 3D TILT EFFECT ========== */
-.mockup {
-    transition: transform 0.1s ease-out;
-    will-change: transform;
-}
-
-/* ========== GLOWING CARDS EFFECT ========== */
-.feature-card {
-    position: relative;
-    overflow: hidden;
-}
-
-.feature-card::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #1b8cae, #0b5e7e, #1b8cae, #0b5e7e);
-    background-size: 200% 200%;
-    border-radius: 26px;
-    opacity: 0;
-    z-index: -1;
-    transition: opacity 0.3s ease;
-    animation: gradientShift 2s ease infinite;
-}
-
-.feature-card:hover::before {
-    opacity: 1;
-}
-
-.feature-card:hover {
-    transform: translateY(-10px);
-    background: rgba(255,255,255,0.15);
-}
-
-/* ========== BUTTON RIPPLE EFFECT ========== */
-.cta-button {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-/* ========== ENHANCED SCROLL HINT ========== */
-.scroll-hint {
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.scroll-hint:hover {
-    background: white;
-    transform: translateX(-50%) scale(1.08);
-}
-
-/* ========== PULSING GLOW ON TITLE ========== */
-.hero-title {
-    animation: titleGlow 3s ease-in-out infinite, textGradient 5s ease infinite;
-    background-size: 200% 200%;
-}
-
-@keyframes textGradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
