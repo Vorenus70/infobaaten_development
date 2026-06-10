@@ -160,7 +160,7 @@ function initAnimatedBoat() {
     boat.className = 'sailing-boat';
     boat.innerHTML = '🚤';
     boat.style.position = 'absolute';
-    boat.style.bottom = '35%';
+    boat.style.bottom = '45%';
     boat.style.right = '-80px';
     boat.style.fontSize = '56px';
     boat.style.zIndex = '5';
