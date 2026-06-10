@@ -1,40 +1,279 @@
-// Scroll reveal animation
-function revealOnScroll() {
-    const elements = document.querySelectorAll('.feature-card, .step');
-    elements.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        if (rect.top < windowHeight - 100) {
-            el.classList.add('revealed');
-        }
-    });
-}
-
-// Create floating particles
+// ========== PARTICLES GENERATION ==========
 function createParticles() {
     const particlesContainer = document.querySelector('.particles');
     if (!particlesContainer) return;
     
-    for (let i = 0; i < 30; i++) {
+    particlesContainer.innerHTML = '';
+    const particleCount = Math.min(50, Math.max(30, Math.floor(window.innerWidth / 20)));
+    
+    for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.style.position = 'absolute';
         particle.style.width = Math.random() * 4 + 2 + 'px';
         particle.style.height = particle.style.width;
-        particle.style.background = 'rgba(255,255,255,' + (Math.random() * 0.5 + 0.1) + ')';
+        particle.style.backgroundColor = `rgba(255, 255, 255, ${Math.random() * 0.3 + 0.1})`;
         particle.style.borderRadius = '50%';
-        particle.style.left = Math.random() * 100 + '%';
         particle.style.top = Math.random() * 100 + '%';
-        particle.style.animation = `float ${Math.random() * 10 + 15}s linear infinite`;
-        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animation = `floatParticle ${Math.random() * 20 + 15}s linear infinite`;
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.pointerEvents = 'none';
         particlesContainer.appendChild(particle);
     }
 }
 
-// Run on load
-window.addEventListener('load', () => {
-    createParticles();
-    revealOnScroll();
-});
+// Add keyframe animation for particles
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+    @keyframes floatParticle {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+    }
+`;
+document.head.appendChild(styleSheet);
 
-// Run on scroll
-window.addEventListener('scroll', revealOnScroll);
+// ========== 3D TILT EFFECT FOR MOCKUP ==========
+function initTiltEffect() {
+    const mockup = document.querySelector('.mockup');
+    if (!mockup) return;
+    
+    mockup.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = (y - centerY) / 20;
+        const rotateY = (centerX - x) / 20;
+        
+        this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+    });
+    
+    mockup.addEventListener('mouseleave', function() {
+        this.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+        this.style.transition = 'transform 0.5s ease';
+    });
+}
+
+// ========== TYPING ANIMATION ==========
+function initTypingAnimation() {
+    const subtitleElement = document.querySelector('.hero-subtitle');
+    if (!subtitleElement) return;
+    
+    const originalText = subtitleElement.textContent;
+    subtitleElement.textContent = '';
+    subtitleElement.style.opacity = '1';
+    
+    let i = 0;
+    function typeNext() {
+        if (i < originalText.length) {
+            subtitleElement.textContent += originalText.charAt(i);
+            i++;
+            setTimeout(typeNext, 80);
+        }
+    }
+    
+    typeNext();
+}
+
+// ========== WATER RIPPLE EFFECT ==========
+function initWaterRipple() {
+    const ctaButton = document.querySelector('.cta-button');
+    if (!ctaButton) return;
+    
+    ctaButton.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.style.position = 'absolute';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.style.width = '0px';
+        ripple.style.height = '0px';
+        ripple.style.borderRadius = '50%';
+        ripple.style.backgroundColor = 'rgba(255,255,255,0.5)';
+        ripple.style.transform = 'translate(-50%, -50%)';
+        ripple.style.transition = 'all 0.5s ease-out';
+        ripple.style.pointerEvents = 'none';
+        
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.style.width = '300px';
+            ripple.style.height = '300px';
+            ripple.style.opacity = '0';
+        }, 10);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 500);
+    });
+}
+
+// ========== ANIMATED BOAT ==========
+function initAnimatedBoat() {
+    const heroContent = document.querySelector('.hero-content');
+    if (!heroContent) return;
+    
+    // Check if boat already exists
+    if (document.querySelector('.sailing-boat')) return;
+    
+    const boat = document.createElement('div');
+    boat.className = 'sailing-boat';
+    boat.innerHTML = '🚤';
+    boat.style.position = 'absolute';
+    boat.style.bottom = '20%';
+    boat.style.left = '-60px';
+    boat.style.fontSize = '48px';
+    boat.style.zIndex = '5';
+    boat.style.animation = 'sailAcross 12s linear infinite';
+    boat.style.pointerEvents = 'none';
+    boat.style.filter = 'drop-shadow(0 5px 10px rgba(0,0,0,0.3))';
+    
+    heroContent.appendChild(boat);
+    
+    // Add CSS for boat animation
+    const boatStyle = document.createElement('style');
+    boatStyle.textContent = `
+        @keyframes sailAcross {
+            0% {
+                left: -60px;
+                transform: translateY(0px) rotate(0deg);
+            }
+            20% {
+                transform: translateY(-10px) rotate(-5deg);
+            }
+            40% {
+                transform: translateY(5px) rotate(3deg);
+            }
+            60% {
+                transform: translateY(-5px) rotate(-2deg);
+            }
+            80% {
+                transform: translateY(8px) rotate(4deg);
+            }
+            100% {
+                left: calc(100% + 60px);
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+    `;
+    document.head.appendChild(boatStyle);
+}
+
+// ========== SCROLL REVEAL ANIMATION ==========
+function initScrollReveal() {
+    const revealElements = document.querySelectorAll('.feature-card, .step');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    
+    revealElements.forEach(el => observer.observe(el));
+}
+
+// ========== SMOOTH SCROLL FOR HINT ==========
+function initSmoothScrollHint() {
+    const scrollHint = document.getElementById('scrollHint');
+    if (!scrollHint) return;
+    
+    // Override the existing click handler to add ripple effect
+    const sections = [
+        document.querySelector('.features'),
+        document.querySelector('.how-it-works'),
+        document.querySelector('.footer')
+    ];
+    
+    scrollHint.addEventListener('click', function(e) {
+        let nextSection = null;
+        const currentScroll = window.scrollY;
+        
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            if (section) {
+                const sectionTop = section.offsetTop;
+                if (sectionTop > currentScroll + 50) {
+                    nextSection = section;
+                    break;
+                }
+            }
+        }
+        
+        if (nextSection) {
+            nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Ripple effect on click
+        const ripple = document.createElement('span');
+        ripple.style.position = 'absolute';
+        ripple.style.left = '50%';
+        ripple.style.top = '50%';
+        ripple.style.width = '0px';
+        ripple.style.height = '0px';
+        ripple.style.borderRadius = '50%';
+        ripple.style.backgroundColor = 'rgba(11,94,126,0.3)';
+        ripple.style.transform = 'translate(-50%, -50%)';
+        ripple.style.transition = 'all 0.4s ease-out';
+        ripple.style.pointerEvents = 'none';
+        
+        scrollHint.style.position = 'relative';
+        scrollHint.style.overflow = 'hidden';
+        scrollHint.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.style.width = '200px';
+            ripple.style.height = '200px';
+            ripple.style.opacity = '0';
+        }, 10);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 500);
+    });
+}
+
+// ========== GLOWING BORDER EFFECT ON FEATURE CARDS ==========
+function initGlowingCards() {
+    const cards = document.querySelectorAll('.feature-card');
+    
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transition = 'all 0.3s ease';
+        });
+    });
+}
+
+// ========== INITIALIZE EVERYTHING ==========
+document.addEventListener('DOMContentLoaded', function() {
+    createParticles();
+    initTiltEffect();
+    initTypingAnimation();
+    initWaterRipple();
+    initAnimatedBoat();
+    initScrollReveal();
+    initSmoothScrollHint();
+    initGlowingCards();
+    
+    // Regenerate particles on resize
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(createParticles, 250);
+    });
+});
